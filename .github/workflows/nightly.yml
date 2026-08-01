@@ -1,0 +1,62 @@
+name: Nightly hardware study
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-hardware-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hardware-feedback:
+    name: Replicated hardware feedback
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.14"
+
+      - name: Record comparator toolchains
+        run: |
+          python --version
+          python3 --version
+          cc --version
+          gcc --version
+          clang --version
+          node --version
+
+      - name: Run complete test suite
+        env:
+          LC_ALL: C.UTF-8
+          PYTHONHASHSEED: "0"
+          TZ: UTC
+        run: python -m unittest discover -v
+
+      - name: Run five-session hardware-feedback study
+        env:
+          LC_ALL: C.UTF-8
+          PYTHONHASHSEED: "0"
+          TZ: UTC
+        run: python -m laicode smoke-hardware-feedback "$RUNNER_TEMP/laicode-nightly"
+
+      - name: Retain nightly evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: hardware-feedback-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/laicode-nightly/
+          if-no-files-found: warn
+          retention-days: 30

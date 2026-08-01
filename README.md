@@ -1,5 +1,7 @@
 # LAIcode
 
+[![CI](https://github.com/ShubhendraGautam/laicode/actions/workflows/ci.yml/badge.svg)](https://github.com/ShubhendraGautam/laicode/actions/workflows/ci.yml)
+
 LAIcode is a research project for **model-native programming and bounded,
 evidence-driven program evolution**. It explores whether machine learners can
 construct and improve typed executable programs through semantic actions and
@@ -119,6 +121,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Replicated hardware-feedback lifecycle](docs/hardware-feedback.md) — repeated
   matched host sessions, stability gates, target-specific vocabulary profiles,
   primitive fallback, and exact decision replay.
+- [Continuous integration and nightly evidence](docs/continuous-integration.md)
+  — required Python compatibility tests plus a scheduled five-session hardware
+  study with retained evidence.
 
 ## Prototype quick start
 
@@ -186,6 +191,10 @@ python3 -m laicode compile-program \
 python3 -m laicode construct-program \
   examples/contracts/cache-policy-v0.json examples/actions/fill-lru-v0.json
 ```
+
+GitHub Actions runs the complete test suite on Python 3.10 and 3.14 for every
+pull request and push to `main`. A separate nightly workflow runs the replicated
+hardware-feedback study and retains its evidence for 30 days.
 
 The validation command prints the SHA-256 epoch identity. The final two commands
 construct the same fixed-kernel artifact through R2 and R3 and print the same
