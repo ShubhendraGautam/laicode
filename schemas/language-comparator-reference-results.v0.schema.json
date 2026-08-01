@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/language-comparator-reference-results.v0.schema.json",
+  "title": "Trusted language comparator reference results v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source_machine_report_id", "results_by_pit"],
+  "properties": {
+    "schema_version": { "const": "LanguageComparatorReferenceResultsV0" },
+    "source_machine_report_id": { "$ref": "#/$defs/content_id" },
+    "results_by_pit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reuse_holdout", "audit_transfer", "shift_no_reuse"],
+      "properties": {
+        "reuse_holdout": { "$ref": "#/$defs/result" },
+        "audit_transfer": { "$ref": "#/$defs/result" },
+        "shift_no_reuse": { "$ref": "#/$defs/result" }
+      }
+    }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["corpus_id", "checksum", "pipeline_invocations"],
+      "properties": {
+        "corpus_id": { "$ref": "#/$defs/content_id" },
+        "checksum": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+        "pipeline_invocations": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

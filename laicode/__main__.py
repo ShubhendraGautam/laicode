@@ -17,6 +17,11 @@ from .kernel import (
     KernelError,
     compile_complete_program,
 )
+from .language_benchmark import (
+    prepare_comparator_package,
+    replay_comparator_package,
+    run_comparator_benchmark,
+)
 from .machine_experiment import (
     MachineExperimentError,
     replay_machine_experiment,
@@ -142,12 +147,109 @@ def _parser() -> argparse.ArgumentParser:
     smoke_machine.add_argument("--compiler", default="cc")
     smoke_machine.add_argument("--trials", type=int, default=9)
     smoke_machine.add_argument("--scale", type=int, default=1000)
+
+    prepare_benchmark = commands.add_parser(
+        "prepare-language-benchmark",
+        help="generate a deterministic cross-language comparator package",
+    )
+    prepare_benchmark.add_argument("machine_bundle")
+    prepare_benchmark.add_argument("output")
+    prepare_benchmark.add_argument("--scale", type=int, default=50)
+    prepare_benchmark.add_argument("--trials", type=int, default=7)
+    prepare_benchmark.add_argument("--warmups", type=int, default=3)
+    prepare_benchmark.add_argument("--startup-trials", type=int, default=5)
+
+    replay_benchmark = commands.add_parser(
+        "replay-language-benchmark",
+        help="exactly regenerate a cross-language comparator package",
+    )
+    replay_benchmark.add_argument("machine_bundle")
+    replay_benchmark.add_argument("package")
+
+    run_benchmark = commands.add_parser(
+        "run-language-benchmark",
+        help="run a comparator package on available local language toolchains",
+    )
+    run_benchmark.add_argument("machine_bundle")
+    run_benchmark.add_argument("package")
+    run_benchmark.add_argument("output")
+
+    smoke_benchmark = commands.add_parser(
+        "smoke-language-comparators",
+        help="build, replay, and run the complete cross-language benchmark",
+    )
+    smoke_benchmark.add_argument("output")
+    smoke_benchmark.add_argument("--scale", type=int, default=50)
+    smoke_benchmark.add_argument("--trials", type=int, default=7)
+    smoke_benchmark.add_argument("--warmups", type=int, default=3)
+    smoke_benchmark.add_argument("--startup-trials", type=int, default=5)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "prepare-language-benchmark":
+            report = prepare_comparator_package(
+                args.machine_bundle,
+                args.output,
+                scale=args.scale,
+                trials=args.trials,
+                warmups=args.warmups,
+                startup_trials=args.startup_trials,
+            )
+            print(
+                f"complete {report.package_id} "
+                f"files={report.files_written} deterministic=true"
+            )
+            return 0
+        if args.command == "replay-language-benchmark":
+            replay = replay_comparator_package(args.machine_bundle, args.package)
+            print(
+                f"replayed {replay.package_id} "
+                f"files={replay.files_verified} exact=true"
+            )
+            return 0
+        if args.command == "run-language-benchmark":
+            report = run_comparator_benchmark(
+                args.machine_bundle,
+                args.package,
+                args.output,
+            )
+            print(
+                f"measured {report.report_id} "
+                f"adapters={len(report.completed_adapters)} "
+                f"skipped={len(report.skipped_adapters)} "
+                f"correct={str(report.correctness_passed).lower()}"
+            )
+            return 0
+        if args.command == "smoke-language-comparators":
+            root = Path(args.output)
+            if root.exists():
+                raise MachineExperimentError(f"output directory already exists: {root}")
+            machine = root / "machine"
+            package = root / "benchmark-package"
+            host = root / "host-results"
+            machine_report = run_machine_experiment(machine)
+            package_report = prepare_comparator_package(
+                machine,
+                package,
+                scale=args.scale,
+                trials=args.trials,
+                warmups=args.warmups,
+                startup_trials=args.startup_trials,
+            )
+            replay = replay_comparator_package(machine, package)
+            host_report = run_comparator_benchmark(machine, package, host)
+            print(
+                f"complete machine={machine_report.report_id} "
+                f"package={package_report.package_id} "
+                f"files={replay.files_verified} exact=true "
+                f"host={host_report.report_id} "
+                f"adapters={len(host_report.completed_adapters)} "
+                f"correct={str(host_report.correctness_passed).lower()}"
+            )
+            return 0
         if args.command == "run-machine-experiment":
             report = run_machine_experiment(args.output)
             print(

@@ -24,6 +24,12 @@ from laicode.kernel import (
     PROGRAM_SCHEMA_VERSION,
     PROGRAM_STATE_SCHEMA_VERSION,
 )
+from laicode.language_benchmark import (
+    BENCHMARK_MANIFEST_SCHEMA_VERSION,
+    HOST_RECORD_SCHEMA_VERSION as COMPARATOR_HOST_RECORD_SCHEMA_VERSION,
+    PACKAGE_RECORD_SCHEMA_VERSION as COMPARATOR_PACKAGE_RECORD_SCHEMA_VERSION,
+    REFERENCE_RESULTS_SCHEMA_VERSION,
+)
 from laicode.machine_language import PIPELINE_SCHEMA_VERSION, VOCABULARY_SCHEMA_VERSION
 from laicode.machine_experiment import (
     CORPUS_SCHEMA_VERSION,
@@ -120,6 +126,18 @@ class SchemaArtifactTests(unittest.TestCase):
             ),
             "machine-host-measurement-record.v0.schema.json": (
                 HARDWARE_RECORD_SCHEMA_VERSION
+            ),
+            "language-comparator-manifest.v0.schema.json": (
+                BENCHMARK_MANIFEST_SCHEMA_VERSION
+            ),
+            "language-comparator-reference-results.v0.schema.json": (
+                REFERENCE_RESULTS_SCHEMA_VERSION
+            ),
+            "language-comparator-package-record.v0.schema.json": (
+                COMPARATOR_PACKAGE_RECORD_SCHEMA_VERSION
+            ),
+            "language-comparator-host-report-record.v0.schema.json": (
+                COMPARATOR_HOST_RECORD_SCHEMA_VERSION
             ),
         }
         for filename, expected in expectations.items():

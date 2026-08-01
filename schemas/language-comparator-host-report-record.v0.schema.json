@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/language-comparator-host-report-record.v0.schema.json",
+  "title": "Cross-language noisy host benchmark report record v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "report"],
+  "properties": {
+    "schema_version": { "const": "LanguageComparatorHostReportRecordV0" },
+    "report_id": { "$ref": "#/$defs/content_id" },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "package_id",
+        "deterministic_package_exactly_replayed_before_measurement",
+        "host",
+        "completed_adapter_ids",
+        "skipped_adapter_ids",
+        "correctness_passed",
+        "adapter_results",
+        "learning_curve_by_pit",
+        "descriptive_ecosystem_ranking_by_pit",
+        "interpretation",
+        "limitations"
+      ],
+      "properties": {
+        "schema_version": { "const": "LanguageComparatorHostReportV0" },
+        "package_id": { "$ref": "#/$defs/content_id" },
+        "deterministic_package_exactly_replayed_before_measurement": { "const": true },
+        "host": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["system", "release", "machine", "cpu_model", "python_controller"],
+          "properties": {
+            "system": { "type": "string", "minLength": 1 },
+            "release": { "type": "string", "minLength": 1 },
+            "machine": { "type": "string", "minLength": 1 },
+            "cpu_model": { "type": "string", "minLength": 1 },
+            "python_controller": { "type": "string", "minLength": 1 }
+          }
+        },
+        "completed_adapter_ids": { "$ref": "#/$defs/identifiers" },
+        "skipped_adapter_ids": { "$ref": "#/$defs/identifiers" },
+        "correctness_passed": { "const": true },
+        "adapter_results": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              { "$ref": "#/$defs/complete_adapter" },
+              { "$ref": "#/$defs/skipped_adapter" }
+            ]
+          }
+        },
+        "learning_curve_by_pit": { "$ref": "#/$defs/learning_pits" },
+        "descriptive_ecosystem_ranking_by_pit": { "$ref": "#/$defs/ranking_pits" },
+        "interpretation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "learning_curve_is_primary_for_evolution",
+            "ecosystem_ranking_is_descriptive_only",
+            "timing_used_for_language_selection",
+            "early_losses_and_non_monotonic_results_retained"
+          ],
+          "properties": {
+            "learning_curve_is_primary_for_evolution": { "const": true },
+            "ecosystem_ranking_is_descriptive_only": { "const": true },
+            "timing_used_for_language_selection": { "const": false },
+            "early_losses_and_non_monotonic_results_retained": { "const": true }
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "identifiers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "trial_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_ns",
+        "minimum_ns",
+        "median_ns",
+        "maximum_ns",
+        "mad_ns",
+        "mad_parts_per_million",
+        "spread_parts_per_million",
+        "normalization_unit",
+        "picoseconds_per_normalization_unit"
+      ],
+      "properties": {
+        "raw_ns": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "minimum_ns": { "type": "integer", "minimum": 1 },
+        "median_ns": { "type": "integer", "minimum": 1 },
+        "maximum_ns": { "type": "integer", "minimum": 1 },
+        "mad_ns": { "type": "integer", "minimum": 0 },
+        "mad_parts_per_million": { "type": "integer", "minimum": 0 },
+        "spread_parts_per_million": { "type": "integer", "minimum": 0 },
+        "normalization_unit": {
+          "enum": ["pipeline_invocation", "process_start", "aot_build"]
+        },
+        "picoseconds_per_normalization_unit": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "pit_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checksum",
+        "checksum_matches_reference",
+        "pipeline_invocations",
+        "steady_state",
+        "benchmark_process_wall_ns",
+        "maximum_resident_kibibytes"
+      ],
+      "properties": {
+        "checksum": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+        "checksum_matches_reference": { "const": true },
+        "pipeline_invocations": { "type": "integer", "minimum": 1 },
+        "steady_state": { "$ref": "#/$defs/trial_summary" },
+        "benchmark_process_wall_ns": { "type": "integer", "minimum": 1 },
+        "maximum_resident_kibibytes": {
+          "oneOf": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "pit_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reuse_holdout", "audit_transfer", "shift_no_reuse"],
+      "properties": {
+        "reuse_holdout": { "$ref": "#/$defs/pit_result" },
+        "audit_transfer": { "$ref": "#/$defs/pit_result" },
+        "shift_no_reuse": { "$ref": "#/$defs/pit_result" }
+      }
+    },
+    "complete_adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adapter_id",
+        "status",
+        "language",
+        "learning_cycle",
+        "execution_model",
+        "tool",
+        "tool_path",
+        "tool_version",
+        "build_kind",
+        "build_ns",
+        "build_measurement",
+        "source_bytes",
+        "source_sha256",
+        "runnable_artifact_bytes",
+        "runnable_artifact_sha256",
+        "runtime_installation_bytes_included",
+        "cold_start",
+        "pits"
+      ],
+      "properties": {
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "status": { "const": "complete" },
+        "language": { "type": "string", "minLength": 1 },
+        "learning_cycle": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0, "maximum": 2 },
+            { "type": "null" }
+          ]
+        },
+        "execution_model": { "type": "string", "minLength": 1 },
+        "tool": { "type": "string", "minLength": 1 },
+        "tool_path": { "type": "string", "minLength": 1 },
+        "tool_version": { "type": "string", "minLength": 1 },
+        "build_kind": { "enum": ["ahead_of_time_c11", "interpreted_no_ahead_of_time_build"] },
+        "build_ns": { "type": "integer", "minimum": 0 },
+        "build_measurement": {
+          "oneOf": [
+            { "$ref": "#/$defs/trial_summary" },
+            { "type": "null" }
+          ]
+        },
+        "source_bytes": { "type": "integer", "minimum": 1 },
+        "source_sha256": { "$ref": "#/$defs/content_id" },
+        "runnable_artifact_bytes": { "type": "integer", "minimum": 1 },
+        "runnable_artifact_sha256": { "$ref": "#/$defs/content_id" },
+        "runtime_installation_bytes_included": { "const": false },
+        "cold_start": { "$ref": "#/$defs/trial_summary" },
+        "pits": { "$ref": "#/$defs/pit_results" }
+      }
+    },
+    "skipped_adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapter_id", "status", "tool"],
+      "properties": {
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "status": { "const": "skipped_tool_unavailable" },
+        "tool": { "type": "string", "minLength": 1 }
+      }
+    },
+    "curve_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cycle", "adapter_id", "median_ns", "picoseconds_per_pipeline_invocation"],
+      "properties": {
+        "cycle": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "median_ns": { "type": "integer", "minimum": 1 },
+        "picoseconds_per_pipeline_invocation": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "ranking_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "adapter_id", "median_ns"],
+      "properties": {
+        "rank": { "type": "integer", "minimum": 1 },
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "median_ns": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "learning_pits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reuse_holdout", "audit_transfer", "shift_no_reuse"],
+      "properties": {
+        "reuse_holdout": { "$ref": "#/$defs/curve" },
+        "audit_transfer": { "$ref": "#/$defs/curve" },
+        "shift_no_reuse": { "$ref": "#/$defs/curve" }
+      }
+    },
+    "curve": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/curve_row" }
+    },
+    "ranking_pits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reuse_holdout", "audit_transfer", "shift_no_reuse"],
+      "properties": {
+        "reuse_holdout": { "$ref": "#/$defs/ranking" },
+        "audit_transfer": { "$ref": "#/$defs/ranking" },
+        "shift_no_reuse": { "$ref": "#/$defs/ranking" }
+      }
+    },
+    "ranking": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/ranking_row" }
+    }
+  }
+}

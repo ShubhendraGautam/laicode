@@ -113,6 +113,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Working hardware-shaped language](docs/working-machine-language.md) — the
   runnable learner, exact replay bundle, generated-C adapter, current results,
   interface, and bounded claims.
+- [Cross-language benchmark laboratory](docs/language-benchmarks.md) — LAIcode
+  cycle curves plus checksum-matched C, Python, and JavaScript comparisons over
+  runtime, build, startup, memory, size, and variability.
 
 ## Prototype quick start
 
@@ -130,6 +133,12 @@ prototype](docs/working-machine-language.md) for the output layout, result, use
 case, and future UI.
 
 The cache-policy D0/D1 prototype remains available separately.
+
+Run the evolving-language and mature-language comparator suite with:
+
+```sh
+python3 -m laicode smoke-language-comparators /tmp/laicode-comparators
+```
 
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not

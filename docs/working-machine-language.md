@@ -72,6 +72,10 @@ python3 -m laicode measure-machine-hardware \
   /tmp/machine-run /tmp/machine-hardware
 ```
 
+For the cycle-by-cycle comparison with direct C/GCC, C/Clang, Python, and
+JavaScript, including build, startup, memory, size, correctness, and timing
+variability, see the [cross-language benchmark laboratory](language-benchmarks.md).
+
 ## Current measured result
 
 On the registered protected holdout, the deterministic full-cost totals are:

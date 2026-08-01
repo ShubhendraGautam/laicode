@@ -115,6 +115,50 @@ class MachineCorpus:
             ],
         }
 
+    @classmethod
+    def from_document(cls, value: Mapping[str, object]) -> "MachineCorpus":
+        if not isinstance(value, dict) or set(value) != {
+            "schema_version",
+            "name",
+            "role",
+            "disclosure",
+            "programs",
+        }:
+            raise MachineExperimentError("machine corpus has invalid fields")
+        if value["schema_version"] != CORPUS_SCHEMA_VERSION:
+            raise MachineExperimentError("machine corpus has an unknown schema")
+        name = value["name"]
+        role = value["role"]
+        disclosure = value["disclosure"]
+        programs = value["programs"]
+        if (
+            not isinstance(name, str)
+            or not isinstance(role, str)
+            or not isinstance(disclosure, str)
+            or not isinstance(programs, list)
+        ):
+            raise MachineExperimentError("machine corpus payload is invalid")
+        weighted: list[WeightedProgram] = []
+        for index, item in enumerate(programs):
+            if not isinstance(item, dict) or set(item) != {
+                "program_id",
+                "executions",
+                "program",
+            }:
+                raise MachineExperimentError(
+                    f"machine corpus program {index} has invalid fields"
+                )
+            program_value = item["program"]
+            executions = item["executions"]
+            program_id = item["program_id"]
+            if not isinstance(program_value, dict):
+                raise MachineExperimentError("machine corpus program is invalid")
+            program = WordProgram.from_document(program_value)
+            if program.program_id != program_id:
+                raise MachineExperimentError("machine corpus program identity differs")
+            weighted.append(WeightedProgram(program, executions))  # type: ignore[arg-type]
+        return cls(name, role, disclosure, tuple(weighted))
+
     @property
     def corpus_id(self) -> str:
         return content_id(self.to_document())

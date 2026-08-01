@@ -66,3 +66,4 @@ gate evidence the decision claims to satisfy.
 - [0005 — Use a hash-chained append-only ledger at D0](0005-use-hash-chained-ledger-at-d0.md)
 - [0006 — Require counterfactual shadow before served effects](0006-use-counterfactual-shadow-before-serving.md)
 - [0007 — Study hardware-shaped vocabulary evolution](0007-study-hardware-shaped-vocabulary-evolution.md)
+- [0008 — Separate learning curves from language comparisons](0008-separate-learning-curves-from-language-comparisons.md)

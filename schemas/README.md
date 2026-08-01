@@ -20,6 +20,10 @@ superinstruction vocabularies, identity-separated weighted corpora, persistent
 learning cycles, full-cost partition evaluations, deterministic run reports,
 and supplemental generated-C host measurements.
 
+B0 adds strict cross-language comparator manifests, trusted checksum reference
+results, deterministic generated-source package records, and noisy host reports
+covering LAIcode learning cycles, C11/GCC, C11/Clang, Python, and JavaScript.
+
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 
 - object fields sorted by Unicode scalar value;
