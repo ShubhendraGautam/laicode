@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/encoded-algorithm-program.v0.schema.json",
+  "title": "LAIcode encoded algorithm program v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kernel_version", "task_id", "parameters", "return_type", "effects", "statements"],
+  "properties": {
+    "schema_version": { "const": "EncodedAlgorithmProgramV0" },
+    "kernel_version": { "const": "StructuredI64ArrayKernelV0" },
+    "task_id": { "$ref": "algorithm-program.v0.schema.json#/$defs/identifier" },
+    "parameters": {
+      "const": [
+        { "name": "nums", "type": "array_i64" },
+        { "name": "target", "type": "i64" }
+      ]
+    },
+    "return_type": { "enum": ["i64", "pair_i64"] },
+    "effects": { "type": "array", "maxItems": 0 },
+    "statements": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/statement" } }
+  },
+  "$defs": {
+    "expression": {
+      "anyOf": [
+        { "$ref": "algorithm-program.v0.schema.json#/$defs/expression" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "entry_id", "arguments"],
+          "properties": {
+            "op": { "const": "intrinsic" },
+            "entry_id": { "$ref": "#/$defs/content_id" },
+            "arguments": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/expression" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "arguments"],
+          "properties": {
+            "op": { "const": "len" },
+            "arguments": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/expression" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "arguments"],
+          "properties": {
+            "op": { "enum": ["get", "add", "sub", "div_trunc", "max", "eq", "lt", "le", "gt", "ge", "and", "pair"] },
+            "arguments": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/expression" } }
+          }
+        }
+      ]
+    },
+    "statement": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "name", "value"],
+          "properties": {
+            "op": { "enum": ["let", "assign"] },
+            "name": { "$ref": "algorithm-program.v0.schema.json#/$defs/identifier" },
+            "value": { "$ref": "#/$defs/expression" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "index", "start", "stop", "body"],
+          "properties": {
+            "op": { "const": "for_range" },
+            "index": { "$ref": "algorithm-program.v0.schema.json#/$defs/identifier" },
+            "start": { "$ref": "#/$defs/expression" },
+            "stop": { "$ref": "#/$defs/expression" },
+            "body": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/statement" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "condition", "body"],
+          "properties": {
+            "op": { "const": "while" },
+            "condition": { "$ref": "#/$defs/expression" },
+            "body": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/statement" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "condition", "then", "else"],
+          "properties": {
+            "op": { "const": "if" },
+            "condition": { "$ref": "#/$defs/expression" },
+            "then": { "type": "array", "items": { "$ref": "#/$defs/statement" } },
+            "else": { "type": "array", "items": { "$ref": "#/$defs/statement" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "value"],
+          "properties": { "op": { "const": "return" }, "value": { "$ref": "#/$defs/expression" } }
+        }
+      ]
+    },
+    "content_id": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  },
+  "$comment": "Intrinsic identities and argument types are checked against the selected vocabulary by the trusted verifier."
+}

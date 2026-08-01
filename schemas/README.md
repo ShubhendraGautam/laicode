@@ -29,6 +29,12 @@ paired aggregate evidence, pit-specific vocabulary activation/retirement
 profiles, offline lifecycle decisions, and replayable run reports. Raw timing is
 archived but remains outside canonical program semantics and deployment.
 
+A0 adds a typed structured algorithm language over signed integers and arrays;
+transparent cross-task expression intrinsics; task contracts and deterministic
+oracle cases; interpreter validity reports; generated-C validation; and exact
+growth-bundle replay. Platform-style tasks remain local compatibility evidence,
+not official judge submissions.
+
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 
 - object fields sorted by Unicode scalar value;

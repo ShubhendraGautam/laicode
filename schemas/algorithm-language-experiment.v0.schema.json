@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/algorithm-language-experiment.v0.schema.json",
+  "title": "Algorithm-language growth experiment v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_name", "question", "kernel", "cycles", "learning_partitions", "protected_holdout", "postfreeze_audit", "validity_rule", "native_rule", "authority", "registered_at"],
+  "properties": {
+    "schema_version": { "const": "AlgorithmLanguageExperimentV0" },
+    "experiment_name": { "const": "typed-algorithm-language-growth-a0-v0" },
+    "question": { "type": "string", "minLength": 1 },
+    "kernel": { "const": "StructuredI64ArrayKernelV0" },
+    "cycles": { "const": [0, 1, 2] },
+    "learning_partitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cycle_1", "cycle_2"],
+      "properties": {
+        "cycle_1": { "const": ["count_target", "linear_search_first"] },
+        "cycle_2": { "const": ["sum_array", "sum_positive_values"] }
+      }
+    },
+    "protected_holdout": { "const": ["binary_search", "maximum_subarray"] },
+    "postfreeze_audit": { "const": ["two_sum_indices"] },
+    "validity_rule": { "const": "all_cycle_interpreter_cases_match_independent_oracle" },
+    "native_rule": { "const": "supplemental_compilation_must_match_the_same_archived_cases" },
+    "authority": { "const": "D0_offline_no_platform_submission_or_deployment" },
+    "registered_at": { "const": "2026-08-01T00:00:00Z" }
+  }
+}

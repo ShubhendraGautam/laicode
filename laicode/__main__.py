@@ -7,6 +7,14 @@ import sys
 import tempfile
 from pathlib import Path
 
+from .algorithm_benchmark import (
+    AlgorithmExperimentError,
+    replay_algorithm_experiment,
+    run_algorithm_experiment,
+    smoke_algorithm_language,
+    validate_algorithm_native,
+)
+from .algorithm_language import AlgorithmLanguageError
 from .cache import CacheError, generate_trace
 from .canonical import canonical_json_bytes
 from .contracts import ContractValidationError, load_contract
@@ -218,12 +226,79 @@ def _parser() -> argparse.ArgumentParser:
     smoke_feedback.add_argument("--trials", type=int, default=7)
     smoke_feedback.add_argument("--warmups", type=int, default=3)
     smoke_feedback.add_argument("--startup-trials", type=int, default=5)
+
+    run_algorithm = commands.add_parser(
+        "run-algorithm-experiment",
+        help="grow the typed algorithm language and validate registered tasks",
+    )
+    run_algorithm.add_argument("output")
+
+    replay_algorithm = commands.add_parser(
+        "replay-algorithm-experiment",
+        help="exactly replay an algorithm-language growth bundle",
+    )
+    replay_algorithm.add_argument("bundle")
+
+    native_algorithm = commands.add_parser(
+        "validate-algorithm-native",
+        help="compile generated C and run archived algorithm validity cases",
+    )
+    native_algorithm.add_argument("bundle")
+    native_algorithm.add_argument("output")
+    native_algorithm.add_argument("--compiler", default="cc")
+
+    smoke_algorithm = commands.add_parser(
+        "smoke-algorithm-language",
+        help="grow, replay, compile, and validate the A0 algorithm language",
+    )
+    smoke_algorithm.add_argument("output")
+    smoke_algorithm.add_argument("--compiler", default="cc")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "run-algorithm-experiment":
+            report = run_algorithm_experiment(args.output)
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"cases={report.case_count} cycles={report.cycle_count} "
+                f"valid={str(report.all_valid).lower()}"
+            )
+            return 0
+        if args.command == "replay-algorithm-experiment":
+            replay = replay_algorithm_experiment(args.bundle)
+            print(
+                f"replayed {replay.source_report_id} "
+                f"files={replay.files_verified} exact=true"
+            )
+            return 0
+        if args.command == "validate-algorithm-native":
+            report = validate_algorithm_native(
+                args.bundle,
+                args.output,
+                compiler=args.compiler,
+            )
+            print(
+                f"validated {report.report_id} compiler={report.compiler} "
+                f"translations={report.translations_passed} "
+                f"cases={report.cases_passed} valid={str(report.all_valid).lower()}"
+            )
+            return 0
+        if args.command == "smoke-algorithm-language":
+            report, replay, native = smoke_algorithm_language(
+                args.output,
+                compiler=args.compiler,
+            )
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"cases={report.case_count} cycles={report.cycle_count} "
+                f"files={replay.files_verified} exact=true "
+                f"native={native.report_id} translations={native.translations_passed} "
+                f"native_cases={native.cases_passed} valid=true"
+            )
+            return 0
         if args.command == "run-hardware-feedback":
             report = run_hardware_feedback_study(
                 args.machine_bundle,
@@ -492,6 +567,8 @@ def main(argv: list[str] | None = None) -> int:
         CommitError,
         IsolationError,
         KernelError,
+        AlgorithmExperimentError,
+        AlgorithmLanguageError,
         MachineExperimentError,
         MachineLanguageError,
         PrototypeError,

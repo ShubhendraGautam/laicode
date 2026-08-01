@@ -30,8 +30,8 @@ started manually from the Actions tab. It:
 1. records the Python, C, GCC, Clang, and Node toolchains;
 2. runs the complete repository test suite;
 3. runs the default five-session `smoke-hardware-feedback` study; and
-4. uploads the complete machine, comparator, raw-session, aggregate, profile,
-   decision, and replay evidence for 30 days.
+4. grows, replays, compiles, and validates the A0 algorithm language; and
+5. uploads the complete hardware and algorithm evidence for 30 days.
 
 The unusual minute avoids the common load spike at the top of the hour. A
 nightly result is exploratory evidence tied to that ephemeral runner's pinned

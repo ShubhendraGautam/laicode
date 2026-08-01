@@ -124,6 +124,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Continuous integration and nightly evidence](docs/continuous-integration.md)
   — required Python compatibility tests plus a scheduled five-session hardware
   study with retained evidence.
+- [Visible algorithm language and validity laboratory](docs/algorithm-language.md)
+  — typed arrays and control flow, learned cross-task intrinsics, execution
+  traces, generated C11, and LeetCode-style local contract validation.
 
 ## Prototype quick start
 
@@ -157,6 +160,18 @@ python3 -m laicode smoke-hardware-feedback /tmp/laicode-feedback
 
 The current profile resolver requires a registered workload pit. This command
 does not classify traffic or deploy the selected vocabulary.
+
+Grow and inspect the typed algorithm language, replay it exactly, compile it to
+C11, and validate binary-search, maximum-subarray, and two-sum-style contracts:
+
+```sh
+python3 -m laicode smoke-algorithm-language /tmp/laicode-algorithms
+```
+
+The bundle contains readable `.lai` programs for every cycle, canonical IR,
+learned vocabulary lowerings, execution traces, generated C, deterministic
+oracle results, and native validation artifacts. These are local equivalent
+contracts rather than official platform submissions.
 
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not
@@ -242,13 +257,14 @@ self-deploy authority to the current application.
 
 ## Current status
 
-**Working D0 selector, D1 counterfactual-shadow alternative, and H1 offline
-hardware-feedback lifecycle.** The closed
+**Working D0 selector, D1 counterfactual-shadow alternative, H1 offline
+hardware-feedback lifecycle, and A0 typed algorithm language.** The closed
 M1/G1 strategy enumerator completes a deterministic
 search–evaluate–select–audit–replay loop. A resource-leased subprocess runner can
 then shadow the selected artifact on an imported trace while the immutable
 original remains the only served champion. The default recency-shift demo
 automatically revokes LFU for regression. Independent review, syscall-level
 containment, confirmatory statistics, independent-machine hardware replication,
-automatic workload classification, model-driven generation, network
-integration, and D2 canary execution remain open gates.
+automatic workload classification, general allocation/strings/graphs, official
+online-judge submission, model-driven generation, network integration, and D2
+canary execution remain open gates.

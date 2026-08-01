@@ -3,6 +3,20 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
+from laicode.algorithm_benchmark import (
+    CASE_SET_SCHEMA_VERSION as ALGORITHM_CASE_SET_SCHEMA_VERSION,
+    EXPERIMENT_SCHEMA_VERSION as ALGORITHM_EXPERIMENT_SCHEMA_VERSION,
+    NATIVE_RECORD_SCHEMA_VERSION as ALGORITHM_NATIVE_RECORD_SCHEMA_VERSION,
+    RUN_RECORD_SCHEMA_VERSION as ALGORITHM_RUN_RECORD_SCHEMA_VERSION,
+    TASK_SCHEMA_VERSION as ALGORITHM_TASK_SCHEMA_VERSION,
+    TRACE_SCHEMA_VERSION as ALGORITHM_TRACE_SCHEMA_VERSION,
+    VALIDITY_SCHEMA_VERSION as ALGORITHM_VALIDITY_SCHEMA_VERSION,
+)
+from laicode.algorithm_language import (
+    ENCODED_PROGRAM_SCHEMA_VERSION as ENCODED_ALGORITHM_PROGRAM_SCHEMA_VERSION,
+    PROGRAM_SCHEMA_VERSION as ALGORITHM_PROGRAM_SCHEMA_VERSION,
+    VOCABULARY_SCHEMA_VERSION as ALGORITHM_VOCABULARY_SCHEMA_VERSION,
+)
 from laicode.canonical import load_json_strict
 from laicode.cache import (
     SIMULATION_SCHEMA_VERSION,
@@ -164,6 +178,34 @@ class SchemaArtifactTests(unittest.TestCase):
             ),
             "hardware-feedback-run-report-record.v0.schema.json": (
                 HARDWARE_FEEDBACK_RUN_RECORD_SCHEMA_VERSION
+            ),
+            "algorithm-program.v0.schema.json": ALGORITHM_PROGRAM_SCHEMA_VERSION,
+            "encoded-algorithm-program.v0.schema.json": (
+                ENCODED_ALGORITHM_PROGRAM_SCHEMA_VERSION
+            ),
+            "algorithm-vocabulary.v0.schema.json": (
+                ALGORITHM_VOCABULARY_SCHEMA_VERSION
+            ),
+            "algorithm-task-contract.v0.schema.json": (
+                ALGORITHM_TASK_SCHEMA_VERSION
+            ),
+            "algorithm-case-set.v0.schema.json": (
+                ALGORITHM_CASE_SET_SCHEMA_VERSION
+            ),
+            "algorithm-language-experiment.v0.schema.json": (
+                ALGORITHM_EXPERIMENT_SCHEMA_VERSION
+            ),
+            "algorithm-validity-report.v0.schema.json": (
+                ALGORITHM_VALIDITY_SCHEMA_VERSION
+            ),
+            "algorithm-execution-trace.v0.schema.json": (
+                ALGORITHM_TRACE_SCHEMA_VERSION
+            ),
+            "algorithm-language-run-report-record.v0.schema.json": (
+                ALGORITHM_RUN_RECORD_SCHEMA_VERSION
+            ),
+            "algorithm-native-validity-report-record.v0.schema.json": (
+                ALGORITHM_NATIVE_RECORD_SCHEMA_VERSION
             ),
         }
         for filename, expected in expectations.items():
