@@ -24,6 +24,14 @@ from laicode.kernel import (
     PROGRAM_SCHEMA_VERSION,
     PROGRAM_STATE_SCHEMA_VERSION,
 )
+from laicode.hardware_feedback import (
+    AGGREGATE_SCHEMA_VERSION as HARDWARE_FEEDBACK_AGGREGATE_SCHEMA_VERSION,
+    DECISION_SCHEMA_VERSION as HARDWARE_LIFECYCLE_DECISION_SCHEMA_VERSION,
+    RUN_RECORD_SCHEMA_VERSION as HARDWARE_FEEDBACK_RUN_RECORD_SCHEMA_VERSION,
+    STUDY_MANIFEST_SCHEMA_VERSION as HARDWARE_FEEDBACK_STUDY_SCHEMA_VERSION,
+    TARGET_PROFILE_SCHEMA_VERSION as HARDWARE_TARGET_PROFILE_SCHEMA_VERSION,
+    TARGET_SCHEMA_VERSION as MACHINE_HARDWARE_TARGET_SCHEMA_VERSION,
+)
 from laicode.language_benchmark import (
     BENCHMARK_MANIFEST_SCHEMA_VERSION,
     HOST_RECORD_SCHEMA_VERSION as COMPARATOR_HOST_RECORD_SCHEMA_VERSION,
@@ -138,6 +146,24 @@ class SchemaArtifactTests(unittest.TestCase):
             ),
             "language-comparator-host-report-record.v0.schema.json": (
                 COMPARATOR_HOST_RECORD_SCHEMA_VERSION
+            ),
+            "machine-hardware-target.v0.schema.json": (
+                MACHINE_HARDWARE_TARGET_SCHEMA_VERSION
+            ),
+            "hardware-feedback-study-manifest.v0.schema.json": (
+                HARDWARE_FEEDBACK_STUDY_SCHEMA_VERSION
+            ),
+            "hardware-feedback-aggregate.v0.schema.json": (
+                HARDWARE_FEEDBACK_AGGREGATE_SCHEMA_VERSION
+            ),
+            "hardware-vocabulary-target-profile.v0.schema.json": (
+                HARDWARE_TARGET_PROFILE_SCHEMA_VERSION
+            ),
+            "hardware-vocabulary-lifecycle-decision.v0.schema.json": (
+                HARDWARE_LIFECYCLE_DECISION_SCHEMA_VERSION
+            ),
+            "hardware-feedback-run-report-record.v0.schema.json": (
+                HARDWARE_FEEDBACK_RUN_RECORD_SCHEMA_VERSION
             ),
         }
         for filename, expected in expectations.items():

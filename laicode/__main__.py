@@ -17,6 +17,11 @@ from .kernel import (
     KernelError,
     compile_complete_program,
 )
+from .hardware_feedback import (
+    replay_hardware_feedback_study,
+    run_hardware_feedback_study,
+    smoke_hardware_feedback,
+)
 from .language_benchmark import (
     prepare_comparator_package,
     replay_comparator_package,
@@ -183,12 +188,91 @@ def _parser() -> argparse.ArgumentParser:
     smoke_benchmark.add_argument("--trials", type=int, default=7)
     smoke_benchmark.add_argument("--warmups", type=int, default=3)
     smoke_benchmark.add_argument("--startup-trials", type=int, default=5)
+
+    run_feedback = commands.add_parser(
+        "run-hardware-feedback",
+        help="run replicated host evidence and freeze a target vocabulary profile",
+    )
+    run_feedback.add_argument("machine_bundle")
+    run_feedback.add_argument("comparator_package")
+    run_feedback.add_argument("output")
+    run_feedback.add_argument("--sessions", type=int, default=5)
+    run_feedback.add_argument("--minimum-improvement-ppm", type=int, default=50_000)
+    run_feedback.add_argument("--required-win-rate-ppm", type=int, default=800_000)
+
+    replay_feedback = commands.add_parser(
+        "replay-hardware-feedback",
+        help="rederive a lifecycle decision from archived noisy host sessions",
+    )
+    replay_feedback.add_argument("machine_bundle")
+    replay_feedback.add_argument("comparator_package")
+    replay_feedback.add_argument("study")
+
+    smoke_feedback = commands.add_parser(
+        "smoke-hardware-feedback",
+        help="run machine evolution, comparators, replicated feedback, and replay",
+    )
+    smoke_feedback.add_argument("output")
+    smoke_feedback.add_argument("--sessions", type=int, default=5)
+    smoke_feedback.add_argument("--scale", type=int, default=50)
+    smoke_feedback.add_argument("--trials", type=int, default=7)
+    smoke_feedback.add_argument("--warmups", type=int, default=3)
+    smoke_feedback.add_argument("--startup-trials", type=int, default=5)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "run-hardware-feedback":
+            report = run_hardware_feedback_study(
+                args.machine_bundle,
+                args.comparator_package,
+                args.output,
+                sessions=args.sessions,
+                minimum_improvement_ppm=args.minimum_improvement_ppm,
+                required_win_rate_ppm=args.required_win_rate_ppm,
+            )
+            selected = ",".join(
+                f"{pit}:{cycle}"
+                for pit, cycle in sorted(report.selected_cycles_by_pit.items())
+            )
+            print(
+                f"complete {report.report_id} target={report.target_id} "
+                f"sessions={report.session_count} selected={selected} deployed=false"
+            )
+            return 0
+        if args.command == "replay-hardware-feedback":
+            replay = replay_hardware_feedback_study(
+                args.machine_bundle,
+                args.comparator_package,
+                args.study,
+            )
+            print(
+                f"replayed {replay.source_report_id} "
+                f"sessions={replay.session_reports_verified} "
+                f"files={replay.files_verified} decision_exact=true timings_rerun=false"
+            )
+            return 0
+        if args.command == "smoke-hardware-feedback":
+            report, replay = smoke_hardware_feedback(
+                args.output,
+                sessions=args.sessions,
+                scale=args.scale,
+                trials=args.trials,
+                warmups=args.warmups,
+                startup_trials=args.startup_trials,
+            )
+            selected = ",".join(
+                f"{pit}:{cycle}"
+                for pit, cycle in sorted(report.selected_cycles_by_pit.items())
+            )
+            print(
+                f"complete {report.report_id} target={report.target_id} "
+                f"sessions={report.session_count} selected={selected} "
+                f"files={replay.files_verified} decision_exact=true deployed=false"
+            )
+            return 0
         if args.command == "prepare-language-benchmark":
             report = prepare_comparator_package(
                 args.machine_bundle,

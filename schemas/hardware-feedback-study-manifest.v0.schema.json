@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/hardware-feedback-study-manifest.v0.schema.json",
+  "title": "Replicated hardware-feedback study manifest v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "study_name",
+    "study_mode",
+    "source_machine_report_id",
+    "comparator_package_id",
+    "target_id",
+    "target",
+    "session_count",
+    "session_order",
+    "policy",
+    "authority",
+    "pits",
+    "negative_results",
+    "registered_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "HardwareFeedbackStudyManifestV0" },
+    "study_name": { "const": "target-specific-vocabulary-feedback-h1-v0" },
+    "study_mode": { "const": "exploratory_replicated_host_feedback" },
+    "source_machine_report_id": { "$ref": "#/$defs/content_id" },
+    "comparator_package_id": { "$ref": "#/$defs/content_id" },
+    "target_id": { "$ref": "#/$defs/content_id" },
+    "target": { "$ref": "machine-hardware-target.v0.schema.json" },
+    "session_count": {
+      "type": "integer",
+      "minimum": 3,
+      "not": { "multipleOf": 2 }
+    },
+    "session_order": { "const": "sequential_matched_adapter_sessions" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline_cycle",
+        "candidate_cycles",
+        "minimum_median_improvement_ppm",
+        "required_paired_win_rate_ppm",
+        "required_paired_wins",
+        "deterministic_token_reduction_required",
+        "selection_rule",
+        "fallback_cycle"
+      ],
+      "properties": {
+        "baseline_cycle": { "const": 0 },
+        "candidate_cycles": { "const": [1, 2] },
+        "minimum_median_improvement_ppm": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+        "required_paired_win_rate_ppm": { "type": "integer", "minimum": 500000, "maximum": 1000000 },
+        "required_paired_wins": { "type": "integer", "minimum": 2 },
+        "deterministic_token_reduction_required": { "const": true },
+        "selection_rule": { "const": "eligible_cycle_with_lowest_median_of_session_medians_then_cycle" },
+        "fallback_cycle": { "const": 0 }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mutation",
+        "primitive_semantics_change",
+        "new_entry_generation",
+        "deployment",
+        "autonomous_deployment"
+      ],
+      "properties": {
+        "mutation": { "const": "activate_or_retire_existing_transparent_entries_only" },
+        "primitive_semantics_change": { "const": false },
+        "new_entry_generation": { "const": false },
+        "deployment": { "const": "D0_offline_profile_only" },
+        "autonomous_deployment": { "const": false }
+      }
+    },
+    "pits": {
+      "const": ["reuse_holdout", "audit_transfer", "shift_no_reuse"]
+    },
+    "negative_results": { "const": "retained" },
+    "registered_at": { "const": "2026-08-01T00:00:00Z" }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

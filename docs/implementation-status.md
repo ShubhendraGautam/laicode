@@ -1,6 +1,6 @@
 # Implementation status
 
-**Status:** working D0/D1 cache alternative, E-H0 evolving language, and B0 comparator laboratory
+**Status:** working D0/D1 cache alternative, E-H0 evolving language, B0 comparator laboratory, and H1 hardware-feedback lifecycle
 **Reviewed against:** [design checklist](design-checklist.md) on 2026-08-01
 
 The checklist is an evidence-gate system, not a backlog. The prototype now
@@ -13,15 +13,15 @@ full gate, the research program, or deployment readiness is complete.
 | --- | --- | --- |
 | Gate 0 — research identity | documented; owner review open | Definitions, thesis, profiles, non-goals, benchmark, and claims ladder are in the [research charter](research-charter.md). Project-owner and independent-review fields remain open. |
 | Gate 1 — novelty | open | The [prior-art map](prior-art.md) is a seed, not a dated systematic corpus. No novelty claim is authorized. |
-| Gate 2 — evolution semantics | R4/L2 vocabulary slice implemented | Strict [machine schemas](../schemas/README.md), canonical identities, the closed cache kernel, R2/R3 construction, and an E-H0 typed word kernel with transparent learned superinstructions are executable. Primitive-semantic evolution, epoch migration, and effects remain open. |
+| Gate 2 — evolution semantics | R4/L2 vocabulary lifecycle slice implemented | Strict [machine schemas](../schemas/README.md), canonical identities, the closed cache kernel, R2/R3 construction, and an E-H0 typed word kernel with transparent learned superinstructions are executable. H1 can activate or retire existing entries in an offline target profile without changing or deleting their lowering. Primitive-semantic evolution, epoch migration, and effects remain open. |
 | Gate 3 — root of trust | partial D1 evidence | Closed artifacts execute in a subprocess with external CPU/wall/address-space/output/file/process limits, a sanitized environment, strict worker protocol, and independent reference validation. There is no syscall/network sandbox, signing service, hostile native-code claim, or production containment report. |
 | Gate 4 — evaluator integrity | exploratory D0 slice implemented | Five identity-separated partitions, aggregate disclosure, one-shot post-freeze audit, exact integer metrics, an eight-case evaluator meta-suite, shields/fallbacks, query budgets, and partition-substitution tests exist. Statistical calibration, leakage analysis, tails/slices, and confirmatory power remain open. |
-| Gate 5 — lifecycle/provenance | local D0 slice implemented | Content-derived candidates/artifacts, complete lifecycle events, canonical JSONL hash chaining, locked/fsynced appends, mutation/reorder/truncation tests, and exact decision replay exist. Authenticated remote provenance and a full deploy/rollback state machine do not. |
-| Gate 6 — experiments | three exploratory manifests implemented | Cache D0, machine-language E-H0, and comparator B0 freeze distinct questions, protected partitions, baselines, fairness rules, metrics, and replay commands. B0 separates within-runtime learning curves from descriptive ecosystem ranking. None satisfies confirmatory design requirements. |
-| Gate 7 — cost | expanded exploratory evidence | E-H0 charges ALU, dispatch, definition, verification, compilation, encoded bytes, and library bytes. B0 archives raw runtime/build/startup distributions, normalized throughput, variability, source/artifact size, and peak RSS. Energy, runtime-installation size, hardware counters, and human effort remain unmeasured. |
+| Gate 5 — lifecycle/provenance | local D0 slice implemented | Content-derived candidates/artifacts, complete lifecycle events, canonical JSONL hash chaining, locked/fsynced appends, mutation/reorder/truncation tests, and exact decision replay exist. H1 adds target/pit-specific activation and retirement records while preserving excluded entries and negative evidence. Authenticated remote provenance and a full deploy/rollback state machine do not. |
+| Gate 6 — experiments | four exploratory manifests implemented | Cache D0, machine-language E-H0, comparator B0, and hardware-feedback H1 freeze distinct questions, protected partitions, baselines, fairness rules, metrics, and replay commands. B0 separates within-runtime learning curves from descriptive ecosystem ranking; H1 adds five matched sessions and paired promotion gates. None satisfies confirmatory design requirements. |
+| Gate 7 — cost | expanded exploratory evidence | E-H0 charges ALU, dispatch, definition, verification, compilation, encoded bytes, and library bytes. B0 archives raw runtime/build/startup distributions, normalized throughput, variability, source/artifact size, and peak RSS. H1 aggregates paired runtime gains but requires deterministic dispatch-token reduction before promotion. Energy, runtime-installation size, hardware counters, and human effort remain unmeasured. |
 | Gate 8 — deployment/recovery | D1 shadow slice implemented | An event-count lease runs an independent counterfactual twin, monitors hard constraints and regression externally, revokes a failing challenger, and verifies the original champion remained unchanged. No challenger serves effects; D2 canary, wall-clock leases, and served-state rollback remain prohibited. |
 | Gate 9 — data/governance | synthetic-only slice | All traces are deterministic synthetic data. Ownership roles, incident process, and release governance remain open. |
-| Gate 10 — reproducibility | local deterministic and host smoke implemented | One-command cache, E-H0, and B0 runs archive raw evidence. Deterministic machine and generated comparator packages regenerate byte for byte; noisy host reports record toolchains and raw trials separately. Clean-environment and independent-person reproduction remain open. |
+| Gate 10 — reproducibility | local deterministic and host smoke implemented | One-command cache, E-H0, B0, and H1 runs archive raw evidence. Deterministic machine and generated comparator packages regenerate byte for byte; noisy host reports record toolchains and raw trials separately. H1 exactly rederives its aggregate, target profile, lifecycle decision, and report without rerunning timing, and rejects raw-evidence or target tampering. Clean-environment and independent-person reproduction remain open. |
 
 ## Working result
 
@@ -57,6 +57,14 @@ runs, direct C remains substantially faster, cycle 2 regresses under shift, and
 absolute/cycle ordering varies across host sessions. The nine-file generated
 source package replays exactly; timing never changes selection.
 
+The [replicated hardware-feedback lifecycle](hardware-feedback.md) closes a
+bounded H1 loop from real-host evidence to an offline target profile. Its first
+five-session run selects cycle 2 for reuse and audit transfer, but falls back to
+primitive cycle 0 for no-reuse shift. Eligibility requires deterministic token
+reduction, at least 80% paired wins, and at least 5% median paired improvement.
+The resolver rejects unknown workload pits, and no execution or deployment
+authority is granted.
+
 The implementation has strict schemas for the contract, kernel/action/state,
 traces, snapshots, simulation results, partition evaluations, evidence catalog,
 candidate and ledger records, comparisons, audit, experiment/implementation
@@ -83,14 +91,18 @@ manifests, offline decision, evaluator meta-report, and run report.
 - [Decision 0008](decisions/0008-separate-learning-curves-from-language-comparisons.md):
   B0 must separate causal within-backend learning curves from descriptive
   ecosystem comparisons while sharing exact semantic checksums.
+- [Decision 0009](decisions/0009-use-replicated-hardware-feedback-for-target-profiles.md):
+  H1 may freeze pit-specific offline vocabulary profiles from replicated,
+  checksum-valid host sessions under deterministic reuse and paired stability
+  gates.
 
 ## Next safe frontier
 
 Keep all learned-language authority at D0 and cache challenger authority at D1.
-The next E-H0 frontier is repeated host runs across toolchains and machines,
-energy/hardware counters, a second backend, broader property-generated kernels,
-longitudinal benchmark aggregation, retirement under drift, and independent
-replication. Primitive-semantic
+The next H2 frontier is independent machines and toolchains, randomized session
+order, calibrated uncertainty, energy/hardware counters, a second backend,
+broader property-generated kernels, drift-triggered profile reevaluation, and
+independent reproduction. Primitive-semantic
 evolution, effects, compiler self-hosting, or D2 authority require a new
 decision. The cache track separately still needs a local key/value adapter,
 stronger containment, trusted leases, rollback, and human-authorized canarying.

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/hardware-vocabulary-target-profile.v0.schema.json",
+  "title": "Target and pit-specific vocabulary activation profile v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "target_id",
+    "source_final_vocabulary_id",
+    "aggregate_id",
+    "profiles_by_pit",
+    "primitive_kernel_unchanged",
+    "deployment_authority"
+  ],
+  "properties": {
+    "schema_version": { "const": "HardwareVocabularyTargetProfileV0" },
+    "target_id": { "$ref": "#/$defs/content_id" },
+    "source_final_vocabulary_id": { "$ref": "#/$defs/content_id" },
+    "aggregate_id": { "$ref": "#/$defs/content_id" },
+    "profiles_by_pit": { "$ref": "#/$defs/pit_map" },
+    "primitive_kernel_unchanged": { "const": true },
+    "deployment_authority": { "const": "D0_offline_profile_only" }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "content_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/content_id" }
+    },
+    "pit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selected_cycle",
+        "selected_vocabulary_id",
+        "active_entry_ids",
+        "retired_entry_ids",
+        "fallback_to_primitives",
+        "retirement_is_profile_exclusion_not_deletion"
+      ],
+      "properties": {
+        "selected_cycle": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "selected_vocabulary_id": { "$ref": "#/$defs/content_id" },
+        "active_entry_ids": { "$ref": "#/$defs/content_ids" },
+        "retired_entry_ids": { "$ref": "#/$defs/content_ids" },
+        "fallback_to_primitives": { "type": "boolean" },
+        "retirement_is_profile_exclusion_not_deletion": { "const": true }
+      }
+    },
+    "pit_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reuse_holdout", "audit_transfer", "shift_no_reuse"],
+      "properties": {
+        "reuse_holdout": { "$ref": "#/$defs/pit" },
+        "audit_transfer": { "$ref": "#/$defs/pit" },
+        "shift_no_reuse": { "$ref": "#/$defs/pit" }
+      }
+    }
+  }
+}

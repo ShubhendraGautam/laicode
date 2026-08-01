@@ -156,6 +156,7 @@ needs a frozen semantic contract and equivalent implementations.
 
 Rust, Go, JVM, WebAssembly, RISC-V, GPU, FPGA/HLS, energy counters, and hardware
 performance counters are planned comparators when their toolchains and target
-authority are available. Host benchmark results must remain external evidence
-until repeated runs on independent machines justify a separately reviewed
-hardware-feedback policy.
+authority are available. The exploratory H1
+[hardware-feedback lifecycle](hardware-feedback.md) now aggregates repeated
+sessions on one pinned host into an offline profile. Independent-machine runs
+and external review remain mandatory before a confirmatory or deployed policy.

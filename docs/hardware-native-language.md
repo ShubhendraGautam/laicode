@@ -58,6 +58,8 @@ one construction choice and one interpreter dispatch. Humans may render it as
 
 The executable E-H0 implementation and reproduction commands are documented in
 [Working hardware-shaped language prototype](working-machine-language.md).
+The first bounded real-hardware feedback loop is documented in
+[Replicated hardware-feedback lifecycle](hardware-feedback.md).
 
 ## Evolution cycle
 

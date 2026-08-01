@@ -116,6 +116,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Cross-language benchmark laboratory](docs/language-benchmarks.md) — LAIcode
   cycle curves plus checksum-matched C, Python, and JavaScript comparisons over
   runtime, build, startup, memory, size, and variability.
+- [Replicated hardware-feedback lifecycle](docs/hardware-feedback.md) — repeated
+  matched host sessions, stability gates, target-specific vocabulary profiles,
+  primitive fallback, and exact decision replay.
 
 ## Prototype quick start
 
@@ -139,6 +142,16 @@ Run the evolving-language and mature-language comparator suite with:
 ```sh
 python3 -m laicode smoke-language-comparators /tmp/laicode-comparators
 ```
+
+Turn five replicated comparator sessions into a conservative offline vocabulary
+profile for the current hardware target with:
+
+```sh
+python3 -m laicode smoke-hardware-feedback /tmp/laicode-feedback
+```
+
+The current profile resolver requires a registered workload pit. This command
+does not classify traffic or deploy the selected vocabulary.
 
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not
@@ -220,11 +233,13 @@ self-deploy authority to the current application.
 
 ## Current status
 
-**Working D0 selector and D1 counterfactual-shadow alternative.** The closed
+**Working D0 selector, D1 counterfactual-shadow alternative, and H1 offline
+hardware-feedback lifecycle.** The closed
 M1/G1 strategy enumerator completes a deterministic
 search–evaluate–select–audit–replay loop. A resource-leased subprocess runner can
 then shadow the selected artifact on an imported trace while the immutable
 original remains the only served champion. The default recency-shift demo
 automatically revokes LFU for regression. Independent review, syscall-level
-containment, confirmatory statistics, model-driven generation, network
+containment, confirmatory statistics, independent-machine hardware replication,
+automatic workload classification, model-driven generation, network
 integration, and D2 canary execution remain open gates.
