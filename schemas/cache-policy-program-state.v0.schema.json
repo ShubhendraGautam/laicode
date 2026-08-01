@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-policy-program-state.v0.schema.json",
+  "title": "LAIcode cache-policy partial program state v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kernel_version",
+    "contract_id",
+    "status",
+    "root"
+  ],
+  "properties": {
+    "schema_version": { "const": "CachePolicyProgramStateV0" },
+    "kernel_version": { "const": "CachePolicyKernelV0" },
+    "contract_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "status": { "enum": ["open", "complete", "abandoned"] },
+    "root": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "node",
+            "hole_id",
+            "expected_type",
+            "allowed_effects",
+            "scope",
+            "obligations"
+          ],
+          "properties": {
+            "node": { "const": "hole" },
+            "hole_id": { "const": "root" },
+            "expected_type": { "const": "CacheKeyV0" },
+            "allowed_effects": { "type": "array", "maxItems": 0 },
+            "scope": {
+              "type": "array",
+              "prefixItems": [{ "const": "snapshot" }],
+              "items": false,
+              "minItems": 1,
+              "maxItems": 1
+            },
+            "obligations": {
+              "type": "array",
+              "prefixItems": [
+                { "const": "result_is_evictable" },
+                { "const": "result_is_not_pinned" }
+              ],
+              "items": false,
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        },
+        {
+          "$ref": "cache-policy-ir.v0.schema.json"
+        }
+      ]
+    }
+  },
+  "$comment": "The runtime additionally enforces that status=open has a hole, status=complete has a program, and abandoned may retain either immutable root."
+}

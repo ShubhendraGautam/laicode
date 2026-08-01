@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/candidate-record.v0.schema.json",
+  "title": "LAIcode immutable candidate record v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "manifest"],
+  "properties": {
+    "schema_version": { "const": "CandidateRecordV0" },
+    "candidate_id": { "$ref": "#/$defs/content_id" },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact_id",
+        "epoch_id",
+        "parent_ids",
+        "generator",
+        "generation_input_ids",
+        "representation",
+        "feedback_treatment",
+        "learner_update",
+        "actual_profile",
+        "authorized_ceiling",
+        "mutation_report",
+        "construction_trace_id",
+        "build_environment",
+        "capability_request"
+      ],
+      "properties": {
+        "schema_version": { "const": "CandidateManifestV0" },
+        "artifact_id": { "$ref": "#/$defs/content_id" },
+        "epoch_id": { "$ref": "#/$defs/content_id" },
+        "parent_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/content_id" }
+        },
+        "generator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "seed"],
+          "properties": {
+            "id": { "$ref": "#/$defs/identifier" },
+            "version": { "$ref": "#/$defs/identifier" },
+            "seed": { "$ref": "#/$defs/nonnegative" }
+          }
+        },
+        "generation_input_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/content_id" }
+        },
+        "representation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["level", "kernel_version", "program_schema", "action_schema"],
+          "properties": {
+            "level": { "enum": ["R2", "R3"] },
+            "kernel_version": { "const": "CachePolicyKernelV0" },
+            "program_schema": { "const": "CacheStrategySelectionV0" },
+            "action_schema": { "const": "CachePolicyActionV0" }
+          }
+        },
+        "feedback_treatment": { "enum": ["F0", "F1", "F2", "F3"] },
+        "learner_update": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["level", "mechanisms"],
+          "properties": {
+            "level": { "enum": ["L0", "L1"] },
+            "mechanisms": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/identifier" }
+            }
+          }
+        },
+        "actual_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["r", "m", "g", "l", "d", "f"],
+          "properties": {
+            "r": { "enum": ["R2", "R3"] },
+            "m": { "enum": ["M0", "M1"] },
+            "g": { "enum": ["G0", "G1"] },
+            "l": { "enum": ["L0", "L1"] },
+            "d": { "enum": ["D0", "D1"] },
+            "f": { "enum": ["F0", "F1", "F2", "F3"] }
+          }
+        },
+        "authorized_ceiling": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["m", "d"],
+          "properties": {
+            "m": { "const": "M1" },
+            "d": { "const": "D0" }
+          }
+        },
+        "mutation_report": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "from_strategy", "to_strategy"],
+          "properties": {
+            "kind": { "const": "strategy_selection" },
+            "from_strategy": {
+              "oneOf": [
+                { "enum": ["fifo", "lfu", "lru"] },
+                { "type": "null" }
+              ]
+            },
+            "to_strategy": { "enum": ["fifo", "lfu", "lru"] }
+          }
+        },
+        "construction_trace_id": {
+          "oneOf": [
+            { "$ref": "#/$defs/content_id" },
+            { "type": "null" }
+          ]
+        },
+        "build_environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["runtime", "dependencies"],
+          "properties": {
+            "runtime": { "const": "PythonStdlibControlPlaneV0" },
+            "dependencies": { "type": "array", "maxItems": 0 }
+          }
+        },
+        "capability_request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["effects"],
+          "properties": {
+            "effects": { "type": "array", "maxItems": 0 }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+    },
+    "nonnegative": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    }
+  },
+  "$comment": "The trusted decoder additionally checks that candidate_id hashes the manifest and that repeated profile fields agree."
+}

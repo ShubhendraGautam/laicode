@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-promotion-decision.v0.schema.json",
+  "title": "LAIcode constrained cache promotion decision v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "rule_version",
+    "champion_artifact_id",
+    "challenger_artifact_id",
+    "operational_champion_evaluation_id",
+    "operational_challenger_evaluation_id",
+    "historical_champion_evaluation_id",
+    "historical_challenger_evaluation_id",
+    "outcome",
+    "reasons",
+    "primary_improvement_ppm",
+    "protected_regression_ppm",
+    "historical_regression_ppm",
+    "policy",
+    "research_audit_evaluation_ids"
+  ],
+  "properties": {
+    "schema_version": { "const": "CachePromotionDecisionV0" },
+    "rule_version": { "const": "CacheConstrainedPromotionV0" },
+    "champion_artifact_id": { "$ref": "#/$defs/content_id" },
+    "challenger_artifact_id": { "$ref": "#/$defs/content_id" },
+    "operational_champion_evaluation_id": { "$ref": "#/$defs/content_id" },
+    "operational_challenger_evaluation_id": { "$ref": "#/$defs/content_id" },
+    "historical_champion_evaluation_id": { "$ref": "#/$defs/content_id" },
+    "historical_challenger_evaluation_id": { "$ref": "#/$defs/content_id" },
+    "outcome": { "enum": ["eligible", "rejected"] },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "all_registered_gates_passed",
+          "operational_hard_constraint_failure",
+          "historical_hard_constraint_failure",
+          "insufficient_operational_events",
+          "insufficient_historical_events",
+          "primary_effect_below_threshold",
+          "protected_metric_regression",
+          "historical_regression"
+        ]
+      }
+    },
+    "primary_improvement_ppm": { "$ref": "#/$defs/signed_ppm" },
+    "protected_regression_ppm": { "$ref": "#/$defs/ppm" },
+    "historical_regression_ppm": { "$ref": "#/$defs/signed_ppm" },
+    "policy": { "$ref": "#/$defs/policy" },
+    "research_audit_evaluation_ids": { "type": "array", "maxItems": 0 }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "ppm": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "signed_ppm": {
+      "type": "integer",
+      "minimum": -1000000,
+      "maximum": 1000000
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_version",
+        "practical_delta_ppm",
+        "protected_tolerance_ppm",
+        "historical_regression_tolerance_ppm",
+        "minimum_events",
+        "maximum_comparisons",
+        "epoch_error_budget_ppm",
+        "uncertainty_method"
+      ],
+      "properties": {
+        "rule_version": { "const": "CacheConstrainedPromotionV0" },
+        "practical_delta_ppm": { "$ref": "#/$defs/ppm" },
+        "protected_tolerance_ppm": { "$ref": "#/$defs/ppm" },
+        "historical_regression_tolerance_ppm": { "$ref": "#/$defs/ppm" },
+        "minimum_events": { "type": "integer", "minimum": 1 },
+        "maximum_comparisons": { "type": "integer", "minimum": 1 },
+        "epoch_error_budget_ppm": { "$ref": "#/$defs/ppm" },
+        "uncertainty_method": { "const": "deterministic_exact_exploratory" }
+      }
+    }
+  },
+  "$comment": "The external comparator additionally verifies evidence partition and artifact bindings and derives every reason and delta."
+}

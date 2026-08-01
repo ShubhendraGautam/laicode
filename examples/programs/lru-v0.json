@@ -1,0 +1,5 @@
+{
+  "schema_version": "CacheStrategySelectionV0",
+  "op": "select_strategy",
+  "strategy_id": "lru"
+}

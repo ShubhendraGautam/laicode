@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-policy-ir.v0.schema.json",
+  "title": "LAIcode cache strategy-selection program v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "op", "strategy_id"],
+  "properties": {
+    "schema_version": { "const": "CacheStrategySelectionV0" },
+    "op": { "const": "select_strategy" },
+    "strategy_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+    }
+  },
+  "$comment": "The active evolution contract supplies the closed allowed_strategy_ids set. Schema validity alone does not authorize a strategy."
+}

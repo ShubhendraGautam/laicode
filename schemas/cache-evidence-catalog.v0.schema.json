@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-evidence-catalog.v0.schema.json",
+  "title": "LAIcode cache evidence catalog v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "partitions"],
+  "properties": {
+    "schema_version": { "const": "CacheEvidenceCatalogV0" },
+    "partitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "search",
+        "operational_holdout",
+        "research_audit",
+        "prospective",
+        "historical_regression"
+      ],
+      "properties": {
+        "search": { "$ref": "#/$defs/disclosed_partition" },
+        "operational_holdout": { "$ref": "#/$defs/disclosed_partition" },
+        "research_audit": {
+          "oneOf": [
+            { "$ref": "#/$defs/disclosed_partition" },
+            { "$ref": "#/$defs/sealed_partition" }
+          ]
+        },
+        "prospective": { "$ref": "#/$defs/disclosed_partition" },
+        "historical_regression": { "$ref": "#/$defs/disclosed_partition" }
+      }
+    }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "trace_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/content_id" }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["partition", "scenario", "seed", "event_count", "capacity"],
+      "properties": {
+        "partition": {
+          "enum": [
+            "search",
+            "operational_holdout",
+            "research_audit",
+            "prospective",
+            "historical_regression"
+          ]
+        },
+        "scenario": {
+          "enum": ["scan_resistance", "recency_shift", "mixed_bursts"]
+        },
+        "seed": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "event_count": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "capacity": { "type": "integer", "minimum": 1, "maximum": 1024 }
+      }
+    },
+    "disclosed_partition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "trace_ids", "specs", "specs_disclosed"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 1 },
+        "trace_ids": { "$ref": "#/$defs/trace_ids" },
+        "specs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/spec" }
+        },
+        "specs_disclosed": { "const": true }
+      }
+    },
+    "sealed_partition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "trace_ids", "specs_disclosed"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 1 },
+        "trace_ids": { "$ref": "#/$defs/trace_ids" },
+        "specs_disclosed": { "const": false }
+      }
+    }
+  },
+  "$comment": "Runtime construction additionally enforces that trace identities are disjoint across partitions and that counts, specs, and trace IDs agree."
+}

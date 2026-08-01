@@ -1,0 +1,11 @@
+{
+  "schema_version": "CachePolicyActionV0",
+  "action": "fill_hole",
+  "payload": {
+    "hole_id": "root",
+    "constructor": {
+      "op": "select_strategy",
+      "strategy_id": "lru"
+    }
+  }
+}
