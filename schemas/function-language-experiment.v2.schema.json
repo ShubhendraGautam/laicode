@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-language-experiment.v2.schema.json",
+  "title": "LAIcode A2 function-language experiment manifest v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_name", "question", "kernel", "cycles", "learning_partitions", "protected_holdout", "postfreeze_audit", "validity_rule", "native_rule", "call_rule", "cost_rule", "authority", "registered_at"],
+  "properties": {
+    "schema_version": { "const": "FunctionLanguageExperimentV2" },
+    "experiment_name": { "const": "bounded-function-call-graph-language-growth-a2-v1" },
+    "question": { "type": "string", "minLength": 1 },
+    "kernel": { "const": "CallGraphFunctionKernelV2" },
+    "cycles": { "const": [0, 1, 2] },
+    "learning_partitions": {
+      "type": "object", "additionalProperties": false, "required": ["cycle_1", "cycle_2"],
+      "properties": {
+        "cycle_1": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } },
+        "cycle_2": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } }
+      }
+    },
+    "protected_holdout": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } },
+    "postfreeze_audit": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } },
+    "validity_rule": { "const": "all_cycle_interpreter_cases_match_independent_oracle" },
+    "native_rule": { "const": "strict_C11_translations_match_the_same_archived_cases" },
+    "call_rule": { "const": "forward_only_declaration_order_acyclic_depth_at_most_4_no_recursion" },
+    "cost_rule": { "const": "learned_abstractions_reduce_definition_statements_at_identical_dispatch" },
+    "authority": { "const": "D0_offline_no_platform_submission_or_deployment" },
+    "registered_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" }
+  },
+  "$comment": "Learning partitions are disclosed to the learner before the freeze. Protected and post-freeze tasks are not."
+}

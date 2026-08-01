@@ -1,6 +1,6 @@
 # Implementation status
 
-**Status:** working D0/D1 cache alternative, E-H0/A0/A1 evolving languages, B0 comparator laboratory, and H1 hardware-feedback lifecycle
+**Status:** working D0/D1 cache alternative, E-H0/A0/A1/A2 evolving languages, B0 comparator laboratory, and H1 hardware-feedback lifecycle
 **Reviewed against:** [design checklist](design-checklist.md) on 2026-08-01
 
 The checklist is an evidence-gate system, not a backlog. The prototype now
@@ -13,15 +13,15 @@ full gate, the research program, or deployment readiness is complete.
 | --- | --- | --- |
 | Gate 0 — research identity | documented; owner review open | Definitions, thesis, profiles, non-goals, benchmark, and claims ladder are in the [research charter](research-charter.md). Project-owner and independent-review fields remain open. |
 | Gate 1 — novelty | open | The [prior-art map](prior-art.md) is a seed, not a dated systematic corpus. No novelty claim is authorized. |
-| Gate 2 — evolution semantics | R4/L2 vocabulary lifecycle slice implemented | Strict [machine schemas](../schemas/README.md), canonical identities, the closed cache kernel, R2/R3 construction, and an E-H0 typed word kernel with transparent learned superinstructions are executable. A0 adds typed i64 arrays, pairs, locals, checked arithmetic/indexing, structured control flow, and transparent cross-task expression intrinsics. A1 is a separate epoch with bounded owned vectors, typed records, and transparent learned statement intrinsics. H1 can activate or retire existing entries in an offline target profile without changing or deleting their lowering. Primitive-semantic evolution, cross-epoch migration, and ambient effects remain open. |
+| Gate 2 — evolution semantics | R4/L2 vocabulary lifecycle slice implemented | Strict [machine schemas](../schemas/README.md), canonical identities, the closed cache kernel, R2/R3 construction, and an E-H0 typed word kernel with transparent learned superinstructions are executable. A0 adds typed i64 arrays, pairs, locals, checked arithmetic/indexing, structured control flow, and transparent cross-task expression intrinsics. A1 is a separate epoch with bounded owned vectors, typed records, and transparent learned statement intrinsics. A2 is a further epoch adding named first-order functions, forward-only call resolution that makes recursion unrepresentable, a statically bounded call graph, and transparent learned function abstractions. H1 can activate or retire existing entries in an offline target profile without changing or deleting their lowering. Primitive-semantic evolution, cross-epoch migration, recursion, and ambient effects remain open. |
 | Gate 3 — root of trust | partial D1 evidence | Closed artifacts execute in a subprocess with external CPU/wall/address-space/output/file/process limits, a sanitized environment, strict worker protocol, and independent reference validation. There is no syscall/network sandbox, signing service, hostile native-code claim, or production containment report. |
 | Gate 4 — evaluator integrity | exploratory D0 slice implemented | Five identity-separated partitions, aggregate disclosure, one-shot post-freeze audit, exact integer metrics, an eight-case evaluator meta-suite, shields/fallbacks, query budgets, and partition-substitution tests exist. Statistical calibration, leakage analysis, tails/slices, and confirmatory power remain open. |
 | Gate 5 — lifecycle/provenance | local D0 slice implemented | Content-derived candidates/artifacts, complete lifecycle events, canonical JSONL hash chaining, locked/fsynced appends, mutation/reorder/truncation tests, and exact decision replay exist. H1 adds target/pit-specific activation and retirement records while preserving excluded entries and negative evidence. Authenticated remote provenance and a full deploy/rollback state machine do not. |
-| Gate 6 — experiments | six exploratory manifests implemented | Cache D0, machine-language E-H0, comparator B0, hardware-feedback H1, algorithm-language A0, and collection-language A1 freeze distinct questions, protected partitions, baselines, fairness rules, metrics, and replay commands. A1 separates indexed/conditional-append learning tasks, protected Remove Element/Running Sum holdouts, and a post-freeze Move Zeroes audit. None satisfies confirmatory design requirements. |
-| Gate 7 — cost | expanded exploratory evidence | E-H0 charges ALU, dispatch, definition, verification, compilation, encoded bytes, and library bytes. B0 archives raw runtime/build/startup distributions, normalized throughput, variability, source/artifact size, and peak RSS. H1 aggregates paired runtime gains but requires deterministic dispatch-token reduction before promotion. A0/A1 report exact interpreter dispatch/step changes and generated/native artifact identities without making a native speed claim. A1 additionally freezes owned-capacity limits but does not measure allocation or copying cost beyond dispatch/steps. Energy, runtime-installation size, hardware counters, and human effort remain unmeasured. |
+| Gate 6 — experiments | seven exploratory manifests implemented | Cache D0, machine-language E-H0, comparator B0, hardware-feedback H1, algorithm-language A0, collection-language A1, and function-language A2 freeze distinct questions, protected partitions, baselines, fairness rules, metrics, and replay commands. A1 separates indexed/conditional-append learning tasks, protected Remove Element/Running Sum holdouts, and a post-freeze Move Zeroes audit. A2 separates absolute-magnitude and maximum-tracking learning tasks, protected Highest Altitude/total-deviation holdouts, and a post-freeze maximum-increasing-difference audit. None satisfies confirmatory design requirements. |
+| Gate 7 — cost | expanded exploratory evidence | E-H0 charges ALU, dispatch, definition, verification, compilation, encoded bytes, and library bytes. B0 archives raw runtime/build/startup distributions, normalized throughput, variability, source/artifact size, and peak RSS. H1 aggregates paired runtime gains but requires deterministic dispatch-token reduction before promotion. A0/A1 report exact interpreter dispatch/step changes and generated/native artifact identities without making a native speed claim. A1 additionally freezes owned-capacity limits but does not measure allocation or copying cost beyond dispatch/steps. A2 measures a different axis entirely: it reports definition statements as the improvement metric and *requires* dispatch to be exactly unchanged, treating any change as an encoding defect rather than a result. Call-frame and stack cost are not modelled. Energy, runtime-installation size, hardware counters, and human effort remain unmeasured. |
 | Gate 8 — deployment/recovery | D1 shadow slice implemented | An event-count lease runs an independent counterfactual twin, monitors hard constraints and regression externally, revokes a failing challenger, and verifies the original champion remained unchanged. No challenger serves effects; D2 canary, wall-clock leases, and served-state rollback remain prohibited. |
 | Gate 9 — data/governance | synthetic-only slice | All traces are deterministic synthetic data. Ownership roles, incident process, and release governance remain open. |
-| Gate 10 — reproducibility | CI, nightly host smoke, and local replay implemented | Pull requests and `main` run the complete suite on Python 3.10/3.14. A scheduled Ubuntu 24.04 job runs the five-session H1 study plus A0 and A1 language/native-validity studies, retaining evidence for 30 days. One-command cache, E-H0, B0, H1, A0, and A1 runs archive evidence; deterministic packages regenerate byte for byte. H1 exactly rederives its decision without rerunning timing, while A0 and A1 each regenerate 138 files and all generated C sources exactly. Independent-person and independent-machine reproduction remain open. |
+| Gate 10 — reproducibility | CI, nightly host smoke, and local replay implemented | Pull requests and `main` run the complete suite on Python 3.10/3.14. A scheduled Ubuntu 24.04 job runs the five-session H1 study plus A0, A1, and A2 language/native-validity studies, retaining evidence for 30 days. One-command cache, E-H0, B0, H1, A0, A1, and A2 runs archive evidence; deterministic packages regenerate byte for byte. H1 exactly rederives its decision without rerunning timing, while A0, A1, and A2 each regenerate 138 files and all generated C sources exactly. Independent-person and independent-machine reproduction remain open. |
 
 ## Working result
 
@@ -87,6 +87,25 @@ statically checked values-and-length record; Running Sum demonstrates computed
 vector construction without reusing the learned vocabulary. Twenty-one C
 sources are generated; 13 representative translations pass 416 native cases.
 
+The [bounded-function and call-graph language](function-language.md) advances to
+a separate A2 kernel epoch, where the unit of abstraction becomes a named
+function rather than an inlined operator shape. Calls resolve only against
+earlier declarations, so recursion and mutual recursion are unrepresentable
+rather than merely rejected, and static call depth is bounded at four across
+local and learned calls. Seven tasks and 224 cases pass in all three cycles.
+Cycle 1 learns `abs_value` and cycle 2 learns `max_of` from identity-separated
+training tasks; the kernel supplies no `max` primitive, so `max_of` must be
+discovered. Total definition statements fall from 28 to 16 to 4 while total
+interpreter dispatch stays at exactly 44,920 in every cycle — the improvement is
+representational, and dispatch equality is asserted per case as evidence that
+encoding preserved semantics, not reported as a speedup. The learned functions
+transfer to protected Highest Altitude and total-deviation tasks and to the
+post-freeze maximum-increasing-difference audit, each dropping three definition
+statements at zero dispatch change. Two functions are deliberately not learned:
+`max_absolute_pair` occurs in one training task, and `min_of` occurs only in
+protected and audit tasks. Twenty-one C sources are generated; 13 representative
+translations pass 416 native cases with checksums identical across all cycles.
+
 The implementation has strict schemas for the contract, kernel/action/state,
 traces, snapshots, simulation results, partition evaluations, evidence catalog,
 candidate and ledger records, comparisons, audit, experiment/implementation
@@ -124,12 +143,17 @@ manifests, offline decision, evaluator meta-report, and run report.
 - [Decision 0011](decisions/0011-add-owned-vectors-and-typed-records.md): A1 may
   add bounded locally owned vectors, one-vector typed records, and transparent
   statement intrinsics under immutable-input and strict native-validity rules.
+- [Decision 0012](decisions/0012-add-bounded-user-defined-functions.md): A2 may
+  add pure first-order functions over a forward-only, depth-bounded call graph
+  with transparent learned function abstractions, measured by definition
+  reduction at provably unchanged dispatch.
 
 ## Next safe frontier
 
 Keep all learned-language authority at D0 and cache challenger authority at D1.
-The next A2 language frontier is bounded user-defined functions and a static
-call graph, followed separately by depth-bounded recursion and then strings or
+The next A3 language frontier is depth-bounded recursion with an explicit budget
+and separate interpreter and native evidence that the budget holds, followed by
+collection-returning functions joining the A1 and A2 kernels, and then strings or
 graph storage; each capability needs a new kernel epoch and protected task
 family. The next H2 frontier is independent machines and toolchains, randomized session
 order, calibrated uncertainty, energy/hardware counters, a second backend,

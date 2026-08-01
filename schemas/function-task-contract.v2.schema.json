@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-task-contract.v2.schema.json",
+  "title": "LAIcode A2 function task contract v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "partition", "description", "platform_contract", "parameters", "return_type", "declared_functions", "static_call_depth", "maximum_input_elements", "oracle", "official_submission"],
+  "properties": {
+    "schema_version": { "const": "FunctionTaskContractV2" },
+    "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+    "partition": { "enum": ["learning_cycle_1", "learning_cycle_2", "protected_holdout", "postfreeze_audit"] },
+    "description": { "type": "string", "minLength": 1 },
+    "platform_contract": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+    "parameters": { "const": [{ "name": "nums", "type": "array_i64" }, { "name": "target", "type": "i64" }] },
+    "return_type": { "const": "i64" },
+    "declared_functions": { "type": "integer", "minimum": 1, "maximum": 8 },
+    "static_call_depth": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "maximum_input_elements": { "const": 256 },
+    "oracle": { "const": "independent_python_reference_v2" },
+    "official_submission": { "const": false }
+  },
+  "$comment": "A platform_contract names a locally reconstructed equivalent contract. It is never a claim of official judge acceptance."
+}

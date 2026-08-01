@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-vocabulary.v2.schema.json",
+  "title": "LAIcode transparent learned function vocabulary v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kernel_version", "parent_vocabulary_id", "entry_ids", "entries"],
+  "properties": {
+    "schema_version": { "const": "FunctionVocabularyV2" },
+    "kernel_version": { "const": "CallGraphFunctionKernelV2" },
+    "parent_vocabulary_id": { "oneOf": [{ "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" }, { "type": "null" }] },
+    "entry_ids": { "type": "array", "maxItems": 16, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" } },
+    "entries": { "type": "array", "maxItems": 16, "items": { "$ref": "#/$defs/entry" } }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "kind", "parameter_types", "return_type", "definition", "learner", "provenance", "evidence"],
+      "properties": {
+        "schema_version": { "const": "FunctionVocabularyEntryV2" },
+        "kind": { "enum": ["abs_value", "max_of"] },
+        "parameter_types": { "type": "array", "minItems": 1, "maxItems": 4, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/parameter_type" } },
+        "return_type": { "$ref": "function-language-defs.v2.schema.json#/$defs/return_type" },
+        "definition": { "$ref": "function-language-defs.v2.schema.json#/$defs/function" },
+        "learner": {
+          "type": "object", "additionalProperties": false, "required": ["id", "cycle"],
+          "properties": { "id": { "const": "CrossTaskFunctionAbstractionLearnerV2" }, "cycle": { "type": "integer", "minimum": 1, "maximum": 2 } }
+        },
+        "provenance": {
+          "type": "object", "additionalProperties": false,
+          "required": ["evidence_catalog_id", "parent_vocabulary_id", "training_task_ids"],
+          "properties": {
+            "evidence_catalog_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+            "parent_vocabulary_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+            "training_task_ids": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } }
+          }
+        },
+        "evidence": {
+          "type": "object", "additionalProperties": false,
+          "required": ["cross_task_occurrences", "definition_statement_count", "estimated_definition_saving"],
+          "properties": {
+            "cross_task_occurrences": { "type": "integer", "minimum": 2 },
+            "definition_statement_count": { "type": "integer", "minimum": 2 },
+            "estimated_definition_saving": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    }
+  },
+  "$comment": "The trusted decoder requires each kind's exact archived definition tree and signature. A learned entry is a callable abstraction, never a new primitive or an opaque native implementation."
+}

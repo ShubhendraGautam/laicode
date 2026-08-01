@@ -23,6 +23,14 @@ from .collection_benchmark import (
     validate_collection_native,
 )
 from .collection_language import CollectionLanguageError
+from .function_benchmark import (
+    FunctionExperimentError,
+    replay_function_experiment,
+    run_function_experiment,
+    smoke_function_language,
+    validate_function_native,
+)
+from .function_language import FunctionLanguageError
 from .cache import CacheError, generate_trace
 from .canonical import canonical_json_bytes
 from .contracts import ContractValidationError, load_contract
@@ -288,6 +296,33 @@ def _parser() -> argparse.ArgumentParser:
     )
     smoke_collection.add_argument("output")
     smoke_collection.add_argument("--compiler", default="cc")
+
+    run_function = commands.add_parser(
+        "run-function-experiment",
+        help="grow the A2 bounded-function and call-graph language",
+    )
+    run_function.add_argument("output")
+
+    replay_function = commands.add_parser(
+        "replay-function-experiment",
+        help="exactly replay an A2 function-language bundle",
+    )
+    replay_function.add_argument("bundle")
+
+    native_function = commands.add_parser(
+        "validate-function-native",
+        help="compile generated A2 C and run archived function cases",
+    )
+    native_function.add_argument("bundle")
+    native_function.add_argument("output")
+    native_function.add_argument("--compiler", default="cc")
+
+    smoke_function = commands.add_parser(
+        "smoke-function-language",
+        help="grow, replay, compile, and validate the A2 function language",
+    )
+    smoke_function.add_argument("output")
+    smoke_function.add_argument("--compiler", default="cc")
     return parser
 
 
@@ -323,6 +358,46 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "smoke-collection-language":
             report, replay, native = smoke_collection_language(
+                args.output,
+                compiler=args.compiler,
+            )
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"cases={report.case_count} cycles={report.cycle_count} "
+                f"files={replay.files_verified} exact=true "
+                f"native={native.report_id} translations={native.translations_passed} "
+                f"native_cases={native.cases_passed} valid=true"
+            )
+            return 0
+        if args.command == "run-function-experiment":
+            report = run_function_experiment(args.output)
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"cases={report.case_count} cycles={report.cycle_count} "
+                f"valid={str(report.all_valid).lower()}"
+            )
+            return 0
+        if args.command == "replay-function-experiment":
+            replay = replay_function_experiment(args.bundle)
+            print(
+                f"replayed {replay.source_report_id} "
+                f"files={replay.files_verified} exact=true"
+            )
+            return 0
+        if args.command == "validate-function-native":
+            report = validate_function_native(
+                args.bundle,
+                args.output,
+                compiler=args.compiler,
+            )
+            print(
+                f"validated {report.report_id} compiler={report.compiler} "
+                f"translations={report.translations_passed} "
+                f"cases={report.cases_passed} valid={str(report.all_valid).lower()}"
+            )
+            return 0
+        if args.command == "smoke-function-language":
+            report, replay, native = smoke_function_language(
                 args.output,
                 compiler=args.compiler,
             )
@@ -646,6 +721,8 @@ def main(argv: list[str] | None = None) -> int:
         AlgorithmLanguageError,
         CollectionExperimentError,
         CollectionLanguageError,
+        FunctionExperimentError,
+        FunctionLanguageError,
         MachineExperimentError,
         MachineLanguageError,
         PrototypeError,

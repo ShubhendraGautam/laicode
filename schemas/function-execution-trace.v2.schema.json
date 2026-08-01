@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-execution-trace.v2.schema.json",
+  "title": "Function-language execution trace v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "cycle", "case_id", "events", "truncated"],
+  "properties": {
+    "schema_version": { "const": "FunctionExecutionTraceV2" },
+    "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+    "cycle": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "case_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+    "events": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/event" } },
+    "truncated": { "type": "boolean" }
+  },
+  "$defs": {
+    "event": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["event", "name"],
+          "properties": { "event": { "enum": ["let", "assign"] }, "name": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["event", "function", "depth"],
+          "properties": {
+            "event": { "enum": ["call", "return"] },
+            "function": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+            "depth": { "type": "integer", "minimum": 1, "maximum": 4 }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["event", "function", "depth", "entry_id", "learned"],
+          "properties": {
+            "event": { "const": "call" },
+            "function": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+            "depth": { "type": "integer", "minimum": 1, "maximum": 4 },
+            "entry_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+            "learned": { "const": true }
+          }
+        }
+      ]
+    }
+  },
+  "$comment": "A learned call names the vocabulary kind it invokes and carries the entry identity it resolved. Traces are bounded and record their own truncation."
+}

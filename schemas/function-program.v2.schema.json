@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-program.v2.schema.json",
+  "title": "LAIcode bounded-function call-graph program v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kernel_version", "task_id", "parameters", "return_type", "effects", "functions"],
+  "properties": {
+    "schema_version": { "const": "FunctionProgramV2" },
+    "kernel_version": { "const": "CallGraphFunctionKernelV2" },
+    "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+    "parameters": { "const": [{ "name": "nums", "type": "array_i64" }, { "name": "target", "type": "i64" }] },
+    "return_type": { "const": "i64" },
+    "effects": { "const": ["pure_bounded_call_graph"] },
+    "functions": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/function" } }
+  },
+  "$comment": "The trusted decoder additionally rejects learned calls in core programs, requires the last function to be the entry point named task_id, and enforces types, scope, acyclicity, reachability, and a static call depth of at most four."
+}

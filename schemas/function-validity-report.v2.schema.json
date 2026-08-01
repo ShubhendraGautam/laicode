@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-validity-report.v2.schema.json",
+  "title": "Function-language interpreter validity report v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "partition", "cycle", "core_program_id", "encoded_program_id", "vocabulary_id", "learned_entry_ids", "learned_static_uses", "declared_functions", "definition_statements", "static_call_depth", "call_graph", "cases_passed", "cases_total", "all_outputs_match_oracle", "total_dispatches", "total_steps", "total_calls", "case_results"],
+  "properties": {
+    "schema_version": { "const": "FunctionValidityReportV2" },
+    "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+    "partition": { "enum": ["learning_cycle_1", "learning_cycle_2", "protected_holdout", "postfreeze_audit"] },
+    "cycle": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "core_program_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+    "encoded_program_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+    "vocabulary_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+    "learned_entry_ids": { "type": "array", "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" } },
+    "learned_static_uses": { "type": "integer", "minimum": 0 },
+    "declared_functions": { "type": "integer", "minimum": 1, "maximum": 8 },
+    "definition_statements": { "type": "integer", "minimum": 0 },
+    "static_call_depth": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "call_graph": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } }
+    },
+    "cases_passed": { "const": 32 },
+    "cases_total": { "const": 32 },
+    "all_outputs_match_oracle": { "const": true },
+    "total_dispatches": { "type": "integer", "minimum": 1 },
+    "total_steps": { "type": "integer", "minimum": 1 },
+    "total_calls": { "type": "integer", "minimum": 1 },
+    "case_results": { "type": "array", "minItems": 32, "maxItems": 32, "items": { "$ref": "#/$defs/case_result" } }
+  },
+  "$defs": {
+    "case_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["case_id", "actual", "matches_oracle", "matches_core_lowering", "dispatches", "steps", "calls", "maximum_depth"],
+      "properties": {
+        "case_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+        "actual": { "$ref": "function-language-defs.v2.schema.json#/$defs/i64" },
+        "matches_oracle": { "const": true },
+        "matches_core_lowering": { "const": true },
+        "dispatches": { "type": "integer", "minimum": 1 },
+        "steps": { "type": "integer", "minimum": 1 },
+        "calls": { "type": "integer", "minimum": 1 },
+        "maximum_depth": { "type": "integer", "minimum": 1, "maximum": 4 }
+      }
+    }
+  },
+  "$comment": "matches_core_lowering additionally asserts that the encoded program consumed exactly the same dispatch count as the core program."
+}

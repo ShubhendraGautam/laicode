@@ -31,6 +31,20 @@ from laicode.collection_language import (
     PROGRAM_SCHEMA_VERSION as COLLECTION_PROGRAM_SCHEMA_VERSION,
     VOCABULARY_SCHEMA_VERSION as COLLECTION_VOCABULARY_SCHEMA_VERSION,
 )
+from laicode.function_benchmark import (
+    CASE_SET_SCHEMA_VERSION as FUNCTION_CASE_SET_SCHEMA_VERSION,
+    EXPERIMENT_SCHEMA_VERSION as FUNCTION_EXPERIMENT_SCHEMA_VERSION,
+    NATIVE_RECORD_SCHEMA_VERSION as FUNCTION_NATIVE_RECORD_SCHEMA_VERSION,
+    RUN_RECORD_SCHEMA_VERSION as FUNCTION_RUN_RECORD_SCHEMA_VERSION,
+    TASK_SCHEMA_VERSION as FUNCTION_TASK_SCHEMA_VERSION,
+    TRACE_SCHEMA_VERSION as FUNCTION_TRACE_SCHEMA_VERSION,
+    VALIDITY_SCHEMA_VERSION as FUNCTION_VALIDITY_SCHEMA_VERSION,
+)
+from laicode.function_language import (
+    ENCODED_PROGRAM_SCHEMA_VERSION as ENCODED_FUNCTION_PROGRAM_SCHEMA_VERSION,
+    PROGRAM_SCHEMA_VERSION as FUNCTION_PROGRAM_SCHEMA_VERSION,
+    VOCABULARY_SCHEMA_VERSION as FUNCTION_VOCABULARY_SCHEMA_VERSION,
+)
 from laicode.canonical import load_json_strict
 from laicode.cache import (
     SIMULATION_SCHEMA_VERSION,
@@ -248,6 +262,34 @@ class SchemaArtifactTests(unittest.TestCase):
             ),
             "collection-native-validity-report-record.v1.schema.json": (
                 COLLECTION_NATIVE_RECORD_SCHEMA_VERSION
+            ),
+            "function-program.v2.schema.json": FUNCTION_PROGRAM_SCHEMA_VERSION,
+            "encoded-function-program.v2.schema.json": (
+                ENCODED_FUNCTION_PROGRAM_SCHEMA_VERSION
+            ),
+            "function-vocabulary.v2.schema.json": (
+                FUNCTION_VOCABULARY_SCHEMA_VERSION
+            ),
+            "function-task-contract.v2.schema.json": (
+                FUNCTION_TASK_SCHEMA_VERSION
+            ),
+            "function-case-set.v2.schema.json": (
+                FUNCTION_CASE_SET_SCHEMA_VERSION
+            ),
+            "function-language-experiment.v2.schema.json": (
+                FUNCTION_EXPERIMENT_SCHEMA_VERSION
+            ),
+            "function-validity-report.v2.schema.json": (
+                FUNCTION_VALIDITY_SCHEMA_VERSION
+            ),
+            "function-execution-trace.v2.schema.json": (
+                FUNCTION_TRACE_SCHEMA_VERSION
+            ),
+            "function-language-run-report-record.v2.schema.json": (
+                FUNCTION_RUN_RECORD_SCHEMA_VERSION
+            ),
+            "function-native-validity-report-record.v2.schema.json": (
+                FUNCTION_NATIVE_RECORD_SCHEMA_VERSION
             ),
         }
         for filename, expected in expectations.items():

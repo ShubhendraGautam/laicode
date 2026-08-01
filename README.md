@@ -130,6 +130,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Owned-vector and typed-record language](docs/collection-language.md) — bounded
   constructed outputs, typed collection records, learned statement forms,
   strict C11 lowering, and platform-style validity evidence.
+- [Bounded-function and call-graph language](docs/function-language.md) — named
+  user functions, forward-only resolution that makes recursion unrepresentable,
+  learned function abstractions, and definition reduction at identical dispatch.
 
 ## Prototype quick start
 
@@ -186,6 +189,18 @@ python3 -m laicode smoke-collection-language /tmp/laicode-collections
 The A1 bundle preserves the same inspect–trace–compile–replay workflow while
 keeping inputs immutable and every owned vector bounded to 256 elements.
 
+Advance to the A2 function epoch, where programs declare named helpers over a
+static call graph and the learner promotes whole functions into the vocabulary:
+
+```sh
+python3 -m laicode smoke-function-language /tmp/laicode-functions
+```
+
+Calls resolve only against earlier declarations, so recursion is unrepresentable
+rather than merely rejected. A2 learned abstractions remove duplicated
+definitions while leaving interpreter dispatch exactly unchanged; that equality
+is asserted per case rather than reported as a speedup.
+
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not
 already exist:
@@ -222,8 +237,8 @@ python3 -m laicode construct-program \
 
 GitHub Actions runs the complete test suite on Python 3.10 and 3.14 for every
 pull request and push to `main`. A separate nightly workflow runs the replicated
-hardware-feedback, A0 algorithm, and A1 collection-language studies and retains
-their evidence for 30 days.
+hardware-feedback, A0 algorithm, A1 collection-language, and A2 function-language
+studies and retains their evidence for 30 days.
 
 The validation command prints the SHA-256 epoch identity. The final two commands
 construct the same fixed-kernel artifact through R2 and R3 and print the same
@@ -272,14 +287,15 @@ self-deploy authority to the current application.
 ## Current status
 
 **Working D0 selector, D1 counterfactual-shadow alternative, H1 offline
-hardware-feedback lifecycle, A0 typed algorithm language, and A1 owned-vector
-and record epoch.** The closed
+hardware-feedback lifecycle, A0 typed algorithm language, A1 owned-vector
+and record epoch, and A2 bounded-function call-graph epoch.** The closed
 M1/G1 strategy enumerator completes a deterministic
 search–evaluate–select–audit–replay loop. A resource-leased subprocess runner can
 then shadow the selected artifact on an imported trace while the immutable
 original remains the only served champion. The default recency-shift demo
 automatically revokes LFU for regression. Independent review, syscall-level
 containment, confirmatory statistics, independent-machine hardware replication,
-automatic workload classification, general heap allocation/strings/graphs, official
+automatic workload classification, general heap allocation/strings/graphs,
+recursion, official
 online-judge submission, model-driven generation, network integration, and D2
 canary execution remain open gates.

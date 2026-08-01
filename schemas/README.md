@@ -41,6 +41,14 @@ and native-report records; plus strict core and encoded program transports. Its
 fixed 256-element storage and one-vector-field record limit are epoch semantics,
 not general heap-allocation claims.
 
+A2 adds a distinct bounded-function call-graph kernel; transparent learned
+function abstractions carrying their exact archived definitions; function task,
+case, trace, validity, experiment, run, and native-report records; plus strict
+core and encoded program transports. Its eight-function, four-parameter, and
+depth-four limits and its forward-only call resolution are epoch semantics.
+The run record constrains dispatch change to zero, because an A2 abstraction
+must remove duplicated definitions without altering executed work.
+
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 
 - object fields sorted by Unicode scalar value;

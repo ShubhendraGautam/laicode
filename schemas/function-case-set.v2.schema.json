@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/function-case-set.v2.schema.json",
+  "title": "LAIcode A2 function case set v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "generator", "case_count", "cases"],
+  "properties": {
+    "schema_version": { "const": "FunctionCaseSetV2" },
+    "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+    "generator": { "const": "splitmix64_function_cases_v2" },
+    "case_count": { "const": 32 },
+    "cases": { "type": "array", "minItems": 32, "maxItems": 32, "items": { "$ref": "#/$defs/case" } }
+  },
+  "$defs": {
+    "case": {
+      "type": "object", "additionalProperties": false,
+      "required": ["case_id", "nums", "target", "expected"],
+      "properties": {
+        "case_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+        "nums": { "type": "array", "maxItems": 256, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/i64" } },
+        "target": { "$ref": "function-language-defs.v2.schema.json#/$defs/i64" },
+        "expected": { "$ref": "function-language-defs.v2.schema.json#/$defs/i64" }
+      }
+    }
+  },
+  "$comment": "Every expectation comes from an independently written Python oracle, not from the program under study."
+}
