@@ -25,6 +25,13 @@ from laicode.kernel import (
     PROGRAM_STATE_SCHEMA_VERSION,
 )
 from laicode.machine_language import PIPELINE_SCHEMA_VERSION, VOCABULARY_SCHEMA_VERSION
+from laicode.machine_experiment import (
+    CORPUS_SCHEMA_VERSION,
+    CYCLE_SCHEMA_VERSION,
+    EVALUATION_SCHEMA_VERSION as MACHINE_EVALUATION_SCHEMA_VERSION,
+    RUN_REPORT_RECORD_SCHEMA_VERSION as MACHINE_RUN_REPORT_RECORD_SCHEMA_VERSION,
+)
+from laicode.machine_hardware import HARDWARE_RECORD_SCHEMA_VERSION
 from laicode.prototype import (
     EXPERIMENT_MANIFEST_SCHEMA_VERSION,
     IMPLEMENTATION_MANIFEST_SCHEMA_VERSION,
@@ -103,6 +110,17 @@ class SchemaArtifactTests(unittest.TestCase):
             "evolution-contract.v0.schema.json": CONTRACT_SCHEMA_VERSION,
             "word-pipeline.v0.schema.json": PIPELINE_SCHEMA_VERSION,
             "machine-vocabulary.v0.schema.json": VOCABULARY_SCHEMA_VERSION,
+            "machine-program-corpus.v0.schema.json": CORPUS_SCHEMA_VERSION,
+            "machine-learning-cycle.v0.schema.json": CYCLE_SCHEMA_VERSION,
+            "machine-partition-evaluation.v0.schema.json": (
+                MACHINE_EVALUATION_SCHEMA_VERSION
+            ),
+            "machine-experiment-run-report-record.v0.schema.json": (
+                MACHINE_RUN_REPORT_RECORD_SCHEMA_VERSION
+            ),
+            "machine-host-measurement-record.v0.schema.json": (
+                HARDWARE_RECORD_SCHEMA_VERSION
+            ),
         }
         for filename, expected in expectations.items():
             with self.subTest(filename=filename):

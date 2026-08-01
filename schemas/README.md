@@ -15,8 +15,10 @@ is explicitly documented as an open payload map.
 Prototype v1 adds strict isolated-worker request/response schemas and D1
 counterfactual-shadow lease, checkpoint, and report schemas.
 
-E-H0 adds a pure 64-bit word-pipeline schema and a transparent learned
-superinstruction-vocabulary schema for hardware-shaped language experiments.
+E-H0 adds schemas for pure 64-bit word pipelines, transparent learned
+superinstruction vocabularies, identity-separated weighted corpora, persistent
+learning cycles, full-cost partition evaluations, deterministic run reports,
+and supplemental generated-C host measurements.
 
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 

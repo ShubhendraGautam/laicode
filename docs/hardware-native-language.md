@@ -56,6 +56,9 @@ meaning is exactly that sequence. Future programs can use the fused opcode as
 one construction choice and one interpreter dispatch. Humans may render it as
 `op_7f3a…`, but its name has no semantics.
 
+The executable E-H0 implementation and reproduction commands are documented in
+[Working hardware-shaped language prototype](working-machine-language.md).
+
 ## Evolution cycle
 
 ```text

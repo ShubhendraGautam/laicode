@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/machine-learning-cycle.v0.schema.json",
+  "title": "Persistent machine-vocabulary learning cycle v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cycle",
+    "training_corpus_id",
+    "input_vocabulary_id",
+    "output_vocabulary_id",
+    "selected_entry_id",
+    "selected_lowering",
+    "input_encoded_tokens",
+    "output_encoded_tokens",
+    "counterfactual_empty_vocabulary_lowering",
+    "persistent_vocabulary_changed_proposal"
+  ],
+  "properties": {
+    "schema_version": { "const": "MachineLearningCycleV0" },
+    "cycle": { "type": "integer", "minimum": 1 },
+    "training_corpus_id": { "$ref": "#/$defs/content_id" },
+    "input_vocabulary_id": { "$ref": "#/$defs/content_id" },
+    "output_vocabulary_id": { "$ref": "#/$defs/content_id" },
+    "selected_entry_id": { "$ref": "#/$defs/content_id" },
+    "selected_lowering": { "$ref": "#/$defs/lowering" },
+    "input_encoded_tokens": { "type": "integer", "minimum": 1 },
+    "output_encoded_tokens": { "type": "integer", "minimum": 1 },
+    "counterfactual_empty_vocabulary_lowering": { "$ref": "#/$defs/lowering" },
+    "persistent_vocabulary_changed_proposal": { "type": "boolean" }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "lowering": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["op", "operand"],
+        "properties": {
+          "op": {
+            "enum": [
+              "xor_const",
+              "add_const",
+              "multiply_const",
+              "and_const",
+              "or_const",
+              "xor_shift_right",
+              "rotate_left"
+            ]
+          },
+          "operand": {
+            "oneOf": [
+              { "type": "integer", "minimum": 1, "maximum": 63 },
+              { "type": "string", "pattern": "^0x[0-9a-f]{16}$" }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

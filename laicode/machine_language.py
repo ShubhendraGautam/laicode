@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Mapping
+from typing import Iterable, Mapping, Sequence
 
 from .canonical import JsonValue, canonical_json_bytes, content_id
 
@@ -117,6 +117,30 @@ class WordProgram:
             "instructions": [item.to_document() for item in self.instructions],
         }
 
+    @classmethod
+    def from_document(cls, value: Mapping[str, object]) -> "WordProgram":
+        if not isinstance(value, dict) or set(value) != {
+            "schema_version",
+            "input_type",
+            "output_type",
+            "effects",
+            "instructions",
+        }:
+            raise MachineLanguageError("word program has invalid fields")
+        if (
+            value["schema_version"] != PIPELINE_SCHEMA_VERSION
+            or value["input_type"] != "u64"
+            or value["output_type"] != "u64"
+            or value["effects"] != []
+        ):
+            raise MachineLanguageError("word program has an incompatible type or schema")
+        instructions = value["instructions"]
+        if not isinstance(instructions, list) or not all(
+            isinstance(item, dict) for item in instructions
+        ):
+            raise MachineLanguageError("word program instructions must be objects")
+        return cls(tuple(WordInstruction.from_document(item) for item in instructions))
+
     @property
     def program_id(self) -> str:
         return content_id(self.to_document())
@@ -192,6 +216,59 @@ class LearnedSuperinstruction:
             },
         }
 
+    @classmethod
+    def from_document(
+        cls,
+        value: Mapping[str, object],
+    ) -> "LearnedSuperinstruction":
+        if not isinstance(value, dict) or set(value) != {
+            "schema_version",
+            "type",
+            "lowering",
+            "learner",
+            "provenance",
+            "evidence",
+        }:
+            raise MachineLanguageError("superinstruction has invalid fields")
+        if value["schema_version"] != SUPERINSTRUCTION_SCHEMA_VERSION:
+            raise MachineLanguageError("superinstruction has an unknown schema")
+        type_value = value["type"]
+        learner = value["learner"]
+        provenance = value["provenance"]
+        evidence = value["evidence"]
+        lowering = value["lowering"]
+        if type_value != {"input": "u64", "output": "u64", "effects": []}:
+            raise MachineLanguageError("superinstruction has an incompatible type")
+        if (
+            not isinstance(learner, dict)
+            or not isinstance(provenance, dict)
+            or not isinstance(evidence, dict)
+            or not isinstance(lowering, list)
+            or not all(isinstance(item, dict) for item in lowering)
+            or set(learner) != {"id", "cycle"}
+            or set(provenance)
+            != {"evidence_catalog_id", "parent_vocabulary_id"}
+            or set(evidence) != {"weighted_occurrences", "estimated_saving"}
+        ):
+            raise MachineLanguageError("superinstruction payload is invalid")
+        generator_id = learner["id"]
+        evidence_catalog_id = provenance["evidence_catalog_id"]
+        parent_vocabulary_id = provenance["parent_vocabulary_id"]
+        if not all(
+            isinstance(item, str)
+            for item in (generator_id, evidence_catalog_id, parent_vocabulary_id)
+        ):
+            raise MachineLanguageError("superinstruction provenance is invalid")
+        return cls(
+            lowering=tuple(WordInstruction.from_document(item) for item in lowering),
+            evidence_catalog_id=evidence_catalog_id,
+            parent_vocabulary_id=parent_vocabulary_id,
+            learned_cycle=learner["cycle"],  # type: ignore[arg-type]
+            weighted_occurrences=evidence["weighted_occurrences"],  # type: ignore[arg-type]
+            estimated_saving=evidence["estimated_saving"],  # type: ignore[arg-type]
+            generator_id=generator_id,
+        )
+
     @property
     def entry_id(self) -> str:
         return content_id(self.to_document())
@@ -221,6 +298,34 @@ class MachineVocabulary:
             "entry_ids": [entry.entry_id for entry in self.entries],
             "entries": [entry.to_document() for entry in self.entries],
         }
+
+    @classmethod
+    def from_document(cls, value: Mapping[str, object]) -> "MachineVocabulary":
+        if not isinstance(value, dict) or set(value) != {
+            "schema_version",
+            "parent_vocabulary_id",
+            "entry_ids",
+            "entries",
+        }:
+            raise MachineLanguageError("vocabulary has invalid fields")
+        if value["schema_version"] != VOCABULARY_SCHEMA_VERSION:
+            raise MachineLanguageError("vocabulary has an unknown schema")
+        parent = value["parent_vocabulary_id"]
+        entry_ids = value["entry_ids"]
+        entries = value["entries"]
+        if parent is not None and not isinstance(parent, str):
+            raise MachineLanguageError("vocabulary parent ID is invalid")
+        if (
+            not isinstance(entry_ids, list)
+            or not isinstance(entries, list)
+            or not all(isinstance(item, dict) for item in entries)
+        ):
+            raise MachineLanguageError("vocabulary entries must be arrays")
+        parsed = tuple(LearnedSuperinstruction.from_document(item) for item in entries)
+        vocabulary = cls(parent_vocabulary_id=parent, entries=parsed)
+        if entry_ids != [entry.entry_id for entry in parsed]:
+            raise MachineLanguageError("vocabulary entry identities do not match")
+        return vocabulary
 
     @property
     def vocabulary_id(self) -> str:
@@ -359,7 +464,11 @@ class WeightedProgram:
     executions: int
 
     def __post_init__(self) -> None:
-        if isinstance(self.executions, bool) or self.executions < 1:
+        if (
+            isinstance(self.executions, bool)
+            or not isinstance(self.executions, int)
+            or self.executions < 1
+        ):
             raise MachineLanguageError("program execution weight must be positive")
 
 
@@ -369,16 +478,39 @@ class CostVector:
     dispatch_units: int
     encoded_bytes: int
     library_bytes: int
+    definition_units: int
+    verification_units: int
+    compilation_units: int
+    storage_units: int
+
+    @property
+    def runtime_units(self) -> int:
+        return self.alu_units + self.dispatch_units
+
+    @property
+    def one_time_units(self) -> int:
+        return (
+            self.definition_units
+            + self.verification_units
+            + self.compilation_units
+            + self.storage_units
+        )
 
     @property
     def total_units(self) -> int:
-        return self.alu_units + self.dispatch_units
+        return self.runtime_units + self.one_time_units
 
     def to_document(self) -> dict[str, JsonValue]:
         return {
             "cost_model": COST_MODEL_VERSION,
             "alu_units": self.alu_units,
             "dispatch_units": self.dispatch_units,
+            "runtime_units": self.runtime_units,
+            "definition_units": self.definition_units,
+            "verification_units": self.verification_units,
+            "compilation_units": self.compilation_units,
+            "storage_units": self.storage_units,
+            "one_time_units": self.one_time_units,
             "total_units": self.total_units,
             "encoded_bytes": self.encoded_bytes,
             "library_bytes": self.library_bytes,
@@ -402,12 +534,74 @@ def evaluate_cost(
         )
         dispatch += len(encoded.tokens) * dispatch_cost * item.executions
         encoded_bytes += len(canonical_json_bytes(encoded.to_document()))
+    library_instruction_count = sum(
+        len(entry.lowering) for entry in vocabulary.entries
+    )
+    library_bytes = len(canonical_json_bytes(vocabulary.to_document()))
+    definition_units = sum(
+        8 + 2 * len(entry.lowering) for entry in vocabulary.entries
+    )
+    verification_units = library_instruction_count * 8
+    compilation_units = library_instruction_count * 4
+    storage_units = (encoded_bytes + library_bytes + 63) // 64
     return CostVector(
         alu_units=alu,
         dispatch_units=dispatch,
         encoded_bytes=encoded_bytes,
-        library_bytes=len(canonical_json_bytes(vocabulary.to_document())),
+        library_bytes=library_bytes,
+        definition_units=definition_units,
+        verification_units=verification_units,
+        compilation_units=compilation_units,
+        storage_units=storage_units,
     )
+
+
+def _token_lowering(
+    token: EncodedToken,
+    vocabulary: MachineVocabulary,
+) -> tuple[WordInstruction, ...]:
+    if token.primitive is not None:
+        return (token.primitive,)
+    assert token.entry_id is not None
+    entry = vocabulary.by_id().get(token.entry_id)
+    if entry is None:
+        raise MachineLanguageError("proposal token references an unknown entry")
+    return entry.lowering
+
+
+def _proposal_occurrences(
+    programs: Sequence[WeightedProgram],
+    vocabulary: MachineVocabulary,
+) -> dict[tuple[WordInstruction, ...], tuple[int, int]]:
+    """Return lowering -> (weighted occurrences, dispatches removed).
+
+    Proposal spans are mined over the current encoded token stream. A learned
+    entry is therefore atomic in the following cycle, giving vocabulary
+    persistence a direct and inspectable effect on the next action space.
+    """
+
+    occurrences: dict[tuple[WordInstruction, ...], tuple[int, int]] = {}
+    existing = {entry.lowering for entry in vocabulary.entries}
+    for item in programs:
+        tokens = encode_program(item.program, vocabulary).tokens
+        for token_length in range(2, min(4, len(tokens)) + 1):
+            for index in range(len(tokens) - token_length + 1):
+                lowering = tuple(
+                    instruction
+                    for token in tokens[index : index + token_length]
+                    for instruction in _token_lowering(token, vocabulary)
+                )
+                if (
+                    lowering in existing
+                    or len(lowering) > MAX_SUPERINSTRUCTION_LENGTH
+                ):
+                    continue
+                count, removed = occurrences.get(lowering, (0, 0))
+                occurrences[lowering] = (
+                    count + item.executions,
+                    removed + item.executions * (token_length - 1),
+                )
+    return occurrences
 
 
 def learn_one_superinstruction(
@@ -419,25 +613,11 @@ def learn_one_superinstruction(
     dispatch_cost: int = 4,
 ) -> MachineVocabulary:
     items = tuple(programs)
-    existing: set[tuple[WordInstruction, ...]] = set()
-    for entry in vocabulary.entries:
-        for length in range(2, len(entry.lowering) + 1):
-            for index in range(len(entry.lowering) - length + 1):
-                existing.add(entry.lowering[index : index + length])
-    occurrences: dict[tuple[WordInstruction, ...], int] = {}
-    for item in items:
-        instructions = item.program.instructions
-        for length in range(2, min(4, len(instructions)) + 1):
-            for index in range(len(instructions) - length + 1):
-                sequence = instructions[index : index + length]
-                if sequence not in existing:
-                    occurrences[sequence] = (
-                        occurrences.get(sequence, 0) + item.executions
-                    )
+    occurrences = _proposal_occurrences(items, vocabulary)
     proposals: list[tuple[int, int, bytes, tuple[WordInstruction, ...]]] = []
-    for sequence, count in occurrences.items():
+    for sequence, (count, dispatches_removed) in occurrences.items():
         definition_cost = 8 + 2 * len(sequence)
-        saving = count * (len(sequence) - 1) * dispatch_cost - definition_cost
+        saving = dispatches_removed * dispatch_cost - definition_cost
         if saving > 0:
             proposals.append(
                 (
@@ -453,9 +633,8 @@ def learn_one_superinstruction(
         return vocabulary
     _, negative_count, _, selected = min(proposals)
     count = -negative_count
-    saving = count * (len(selected) - 1) * dispatch_cost - (
-        8 + 2 * len(selected)
-    )
+    _, dispatches_removed = occurrences[selected]
+    saving = dispatches_removed * dispatch_cost - (8 + 2 * len(selected))
     entry = LearnedSuperinstruction(
         lowering=selected,
         evidence_catalog_id=evidence_catalog_id,

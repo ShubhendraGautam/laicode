@@ -110,15 +110,34 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Hardware-native evolving language](docs/hardware-native-language.md) — the
   stronger R4/L2 goal, emergence criteria, first machine-language experiment,
   and hardware-validation path.
+- [Working hardware-shaped language](docs/working-machine-language.md) — the
+  runnable learner, exact replay bundle, generated-C adapter, current results,
+  interface, and bounded claims.
 
 ## Prototype quick start
+
+Run the hardware-shaped language learner, exact replay, generated-C build, and
+host measurement with one command (the output path must not exist):
+
+```sh
+python3 -m laicode smoke-machine-language /tmp/laicode-machine
+```
+
+The current language is canonical typed JSON over pure 64-bit word pipelines.
+Python implements the trusted learner/control plane and generated C11 is the
+first native measurement backend. See the [working language
+prototype](docs/working-machine-language.md) for the output layout, result, use
+case, and future UI.
+
+The cache-policy D0/D1 prototype remains available separately.
 
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not
 already exist:
 
 ```sh
-python3 -m laicode smoke-prototype +  examples/contracts/cache-policy-v0.json /tmp/laicode-prototype
+python3 -m laicode smoke-prototype \
+  examples/contracts/cache-policy-v0.json /tmp/laicode-prototype
 ```
 
 The command validates the evaluator before candidate search, enumerates the

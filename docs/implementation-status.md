@@ -1,6 +1,6 @@
 # Implementation status
 
-**Status:** working D0 selector plus bounded D1 counterfactual shadow
+**Status:** working D0/D1 cache alternative plus exploratory E-H0 evolving language
 **Reviewed against:** [design checklist](design-checklist.md) on 2026-08-01
 
 The checklist is an evidence-gate system, not a backlog. The prototype now
@@ -13,15 +13,15 @@ full gate, the research program, or deployment readiness is complete.
 | --- | --- | --- |
 | Gate 0 — research identity | documented; owner review open | Definitions, thesis, profiles, non-goals, benchmark, and claims ladder are in the [research charter](research-charter.md). Project-owner and independent-review fields remain open. |
 | Gate 1 — novelty | open | The [prior-art map](prior-art.md) is a seed, not a dated systematic corpus. No novelty claim is authorized. |
-| Gate 2 — evolution semantics | D0 slice implemented | Strict [machine schemas](../schemas/README.md), canonical identities, a closed LRU/FIFO/LFU kernel, R2/R3 construction, contract expiry, default-deny effects, and authorization tests are executable. Learned abstractions, epoch migration, and broader mutation remain open. |
+| Gate 2 — evolution semantics | R4/L2 vocabulary slice implemented | Strict [machine schemas](../schemas/README.md), canonical identities, the closed cache kernel, R2/R3 construction, and an E-H0 typed word kernel with transparent learned superinstructions are executable. Primitive-semantic evolution, epoch migration, and effects remain open. |
 | Gate 3 — root of trust | partial D1 evidence | Closed artifacts execute in a subprocess with external CPU/wall/address-space/output/file/process limits, a sanitized environment, strict worker protocol, and independent reference validation. There is no syscall/network sandbox, signing service, hostile native-code claim, or production containment report. |
 | Gate 4 — evaluator integrity | exploratory D0 slice implemented | Five identity-separated partitions, aggregate disclosure, one-shot post-freeze audit, exact integer metrics, an eight-case evaluator meta-suite, shields/fallbacks, query budgets, and partition-substitution tests exist. Statistical calibration, leakage analysis, tails/slices, and confirmatory power remain open. |
 | Gate 5 — lifecycle/provenance | local D0 slice implemented | Content-derived candidates/artifacts, complete lifecycle events, canonical JSONL hash chaining, locked/fsynced appends, mutation/reorder/truncation tests, and exact decision replay exist. Authenticated remote provenance and a full deploy/rollback state machine do not. |
-| Gate 6 — experiments | exploratory manifest implemented | The run freezes a question, hypothesis, falsifier, profiles, traces, baselines, metrics, thresholds, budgets, and analysis command. It is explicitly exploratory and does not satisfy confirmatory design requirements. |
-| Gate 7 — cost | partial | Candidate count, artifact bytes, evaluator queries, network, model-token, money, and archive storage are recorded. CPU, wall time, memory, energy, and human effort are not independently measured or enforced. |
+| Gate 6 — experiments | two exploratory manifests implemented | Cache D0 and machine-language E-H0 freeze questions, falsifiers, protected partitions, matched baselines, cost rules, budgets, and replay commands. Neither satisfies confirmatory design requirements. |
+| Gate 7 — cost | expanded exploratory evidence | E-H0 separately charges ALU, dispatch, definition, verification, compilation, encoded bytes, and library bytes, then archives noisy native timing. Energy, peak memory, and human effort remain unmeasured. |
 | Gate 8 — deployment/recovery | D1 shadow slice implemented | An event-count lease runs an independent counterfactual twin, monitors hard constraints and regression externally, revokes a failing challenger, and verifies the original champion remained unchanged. No challenger serves effects; D2 canary, wall-clock leases, and served-state rollback remain prohibited. |
 | Gate 9 — data/governance | synthetic-only slice | All traces are deterministic synthetic data. Ownership roles, incident process, and release governance remain open. |
-| Gate 10 — reproducibility | local smoke implemented | A one-command smoke run archives full raw evidence and verifies a byte-for-byte fresh replay. Clean-environment and independent-person reproduction remain open. |
+| Gate 10 — reproducibility | local deterministic and host smoke implemented | One-command cache and E-H0 runs archive raw evidence; deterministic bundles regenerate byte for byte. E-H0 also emits and compiles C11, records compiler/host/raw timings, and excludes noisy timing from exact identity. Clean-environment and independent-person reproduction remain open. |
 
 ## Working result
 
@@ -37,6 +37,16 @@ artifact into a resource-bounded D1 counterfactual shadow. On the default
 recency-shift stream, its lease is revoked at 192 observed events while the
 original LRU artifact remains the sole served champion. A non-regressing scan
 workload exercises lease expiry without promotion.
+
+The [working hardware-shaped language](working-machine-language.md) adds a
+separate R4/L2 experiment. Two execution-learned operations persist across
+cycles and change the next proposal space. On the protected holdout, learned
+total cost is 26,698 units versus 35,349 fixed-human, 46,715 primitive-only,
+and 46,881 seeded-random. It wins the post-freeze audit, while an unrelated
+future workload retains a 12,665 versus 12,499 negative-transfer result. The
+same primitive and learned bytecodes compile to generated C, produce identical
+checksums, and archive raw host timings without allowing timing noise into the
+selection identity.
 
 The implementation has strict schemas for the contract, kernel/action/state,
 traces, snapshots, simulation results, partition evaluations, evidence catalog,
@@ -58,11 +68,16 @@ manifests, offline decision, evaluator meta-report, and run report.
 - [Decision 0006](decisions/0006-use-counterfactual-shadow-before-serving.md):
   closed artifacts must earn D1 evidence without served effects before any D2
   proposal.
+- [Decision 0007](decisions/0007-study-hardware-shaped-vocabulary-evolution.md):
+  E-H0 may evolve transparent typed vocabulary over a fixed semantic kernel and
+  must test matched alternatives, overhead, replay, transfer, and host evidence.
 
 ## Next safe frontier
 
-Keep challenger authority at D1. The next implementation work should add a local
-key/value adapter around the stable champion, syscall-level containment for any
-broader candidate language, trusted wall-clock leases, an independently
-monitored human-authorized D2 canary, served-state rollback, confirmatory
-comparison calibration, and independent review.
+Keep all learned-language authority at D0 and cache challenger authority at D1.
+The next E-H0 frontier is repeated host runs across toolchains and machines,
+energy/code-size counters, a second backend, broader property-generated kernels,
+retirement under drift, and independent replication. Primitive-semantic
+evolution, effects, compiler self-hosting, or D2 authority require a new
+decision. The cache track separately still needs a local key/value adapter,
+stronger containment, trusted leases, rollback, and human-authorized canarying.

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/machine-program-corpus.v0.schema.json",
+  "title": "Identity-separated weighted word-program corpus v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "name", "role", "disclosure", "programs"],
+  "properties": {
+    "schema_version": { "const": "MachineProgramCorpusV0" },
+    "name": { "type": "string", "minLength": 1 },
+    "role": { "type": "string", "minLength": 1 },
+    "disclosure": { "type": "string", "minLength": 1 },
+    "programs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["program_id", "executions", "program"],
+        "properties": {
+          "program_id": { "$ref": "#/$defs/content_id" },
+          "executions": { "type": "integer", "minimum": 1 },
+          "program": { "$ref": "word-pipeline.v0.schema.json" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

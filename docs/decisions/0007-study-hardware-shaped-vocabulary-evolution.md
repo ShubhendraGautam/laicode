@@ -114,6 +114,16 @@ cost replay, persistent cross-cycle vocabulary change, matched baselines,
 held-out and drift partitions, full lineage, and reproducible GCC/Clang host
 measurement scripts.
 
+The exploratory E-H0 implementation now supplies that bounded evidence for one
+generated-C `cc` backend. Its protected deterministic result selects learned at
+26,698 total units versus 35,349 fixed-human, 46,715 primitive-only, and 46,881
+seeded-random; all 38 deterministic files replay byte for byte. A default
+nine-trial GCC run on the development x86-64 host produced identical semantic
+checksums, nine learned wins, and a lower learned median. The separately
+archived future-shift result favors primitive-only (12,499 versus 12,665), so no
+generality claim follows. Independent machines, Clang replication, energy, and
+confirmatory calibration remain open.
+
 ## Revisit criteria
 
 Start a new decision before adding memory, branches, effects, concurrency,

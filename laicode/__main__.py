@@ -17,6 +17,13 @@ from .kernel import (
     KernelError,
     compile_complete_program,
 )
+from .machine_experiment import (
+    MachineExperimentError,
+    replay_machine_experiment,
+    run_machine_experiment,
+)
+from .machine_hardware import measure_machine_hardware
+from .machine_language import MachineLanguageError
 from .prototype import PrototypeError, replay_prototype, run_prototype
 from .provenance import ProvenanceError
 from .shadow import ShadowError, replay_shadow, run_shadow
@@ -104,12 +111,94 @@ def _parser() -> argparse.ArgumentParser:
     alternative.add_argument("--seed", type=int, default=401)
     alternative.add_argument("--events", type=int, default=256)
     alternative.add_argument("--capacity", type=int, default=8)
+
+    run_machine = commands.add_parser(
+        "run-machine-experiment",
+        help="run the deterministic E-H0 vocabulary-evolution experiment",
+    )
+    run_machine.add_argument("output")
+
+    replay_machine = commands.add_parser(
+        "replay-machine-experiment",
+        help="exactly replay an E-H0 deterministic evidence bundle",
+    )
+    replay_machine.add_argument("bundle")
+
+    measure_machine = commands.add_parser(
+        "measure-machine-hardware",
+        help="compile and measure a deterministic E-H0 bundle on this host",
+    )
+    measure_machine.add_argument("bundle")
+    measure_machine.add_argument("output")
+    measure_machine.add_argument("--compiler", default="cc")
+    measure_machine.add_argument("--trials", type=int, default=9)
+    measure_machine.add_argument("--scale", type=int, default=1000)
+
+    smoke_machine = commands.add_parser(
+        "smoke-machine-language",
+        help="run, replay, compile, and measure the E-H0 working prototype",
+    )
+    smoke_machine.add_argument("output")
+    smoke_machine.add_argument("--compiler", default="cc")
+    smoke_machine.add_argument("--trials", type=int, default=9)
+    smoke_machine.add_argument("--scale", type=int, default=1000)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "run-machine-experiment":
+            report = run_machine_experiment(args.output)
+            print(
+                f"complete {report.report_id} "
+                f"selected={report.selected_variant} "
+                f"hypothesis_passed={str(report.central_hypothesis_passed).lower()}"
+            )
+            return 0
+        if args.command == "replay-machine-experiment":
+            replay = replay_machine_experiment(args.bundle)
+            print(
+                f"replayed {replay.source_report_id} "
+                f"files={replay.files_verified} exact=true"
+            )
+            return 0
+        if args.command == "measure-machine-hardware":
+            report = measure_machine_hardware(
+                args.bundle,
+                args.output,
+                compiler=args.compiler,
+                trials=args.trials,
+                scale=args.scale,
+            )
+            print(
+                f"measured {report.report_id} "
+                f"primitive_median_ns={report.primitive_median_ns} "
+                f"learned_median_ns={report.learned_median_ns} "
+                f"model_direction_agrees={str(report.model_direction_agrees).lower()}"
+            )
+            return 0
+        if args.command == "smoke-machine-language":
+            root = Path(args.output)
+            if root.exists():
+                raise MachineExperimentError(f"output directory already exists: {root}")
+            report = run_machine_experiment(root / "deterministic")
+            replay = replay_machine_experiment(root / "deterministic")
+            hardware = measure_machine_hardware(
+                root / "deterministic",
+                root / "hardware",
+                compiler=args.compiler,
+                trials=args.trials,
+                scale=args.scale,
+            )
+            print(
+                f"complete {report.report_id} "
+                f"selected={report.selected_variant} "
+                f"files={replay.files_verified} exact=true "
+                f"hardware={hardware.report_id} "
+                f"model_direction_agrees={str(hardware.model_direction_agrees).lower()}"
+            )
+            return 0
         if args.command == "generate-trace":
             trace = generate_trace(
                 args.scenario,
@@ -217,6 +306,8 @@ def main(argv: list[str] | None = None) -> int:
         CommitError,
         IsolationError,
         KernelError,
+        MachineExperimentError,
+        MachineLanguageError,
         PrototypeError,
         ProvenanceError,
         ShadowError,
