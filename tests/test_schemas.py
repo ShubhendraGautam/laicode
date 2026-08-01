@@ -24,6 +24,7 @@ from laicode.kernel import (
     PROGRAM_SCHEMA_VERSION,
     PROGRAM_STATE_SCHEMA_VERSION,
 )
+from laicode.machine_language import PIPELINE_SCHEMA_VERSION, VOCABULARY_SCHEMA_VERSION
 from laicode.prototype import (
     EXPERIMENT_MANIFEST_SCHEMA_VERSION,
     IMPLEMENTATION_MANIFEST_SCHEMA_VERSION,
@@ -52,7 +53,7 @@ SCHEMA_DIR = ROOT / "schemas"
 class SchemaArtifactTests(unittest.TestCase):
     def test_every_schema_is_strict_profile_json(self) -> None:
         paths = sorted(SCHEMA_DIR.glob("*.schema.json"))
-        self.assertGreaterEqual(len(paths), 25)
+        self.assertGreaterEqual(len(paths), 27)
         for path in paths:
             with self.subTest(path=path.name):
                 document = load_json_strict(path.read_bytes())
@@ -100,6 +101,8 @@ class SchemaArtifactTests(unittest.TestCase):
                 SHADOW_REPORT_RECORD_SCHEMA_VERSION
             ),
             "evolution-contract.v0.schema.json": CONTRACT_SCHEMA_VERSION,
+            "word-pipeline.v0.schema.json": PIPELINE_SCHEMA_VERSION,
+            "machine-vocabulary.v0.schema.json": VOCABULARY_SCHEMA_VERSION,
         }
         for filename, expected in expectations.items():
             with self.subTest(filename=filename):

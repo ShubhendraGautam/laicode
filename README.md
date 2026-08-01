@@ -107,6 +107,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Working cache-policy alternative](docs/working-alternative.md) — bounded
   subprocess workers, counterfactual shadow leases, automatic revocation, and
   imported-trace operation.
+- [Hardware-native evolving language](docs/hardware-native-language.md) — the
+  stronger R4/L2 goal, emergence criteria, first machine-language experiment,
+  and hardware-validation path.
 
 ## Prototype quick start
 
