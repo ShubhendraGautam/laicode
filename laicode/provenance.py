@@ -51,6 +51,13 @@ _EVENT_TYPES = {
     "prospective_evaluated",
     "research_audit_consumed",
     "run_completed",
+    "shadow_run_started",
+    "shadow_lease_issued",
+    "shadow_checkpoint",
+    "shadow_lease_revoked",
+    "shadow_lease_expired",
+    "shadow_recovery_verified",
+    "shadow_run_completed",
     "incident",
 }
 

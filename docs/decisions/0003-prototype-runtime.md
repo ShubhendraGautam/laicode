@@ -92,3 +92,12 @@ Revisit before M2/M3, before D1, if profiling shows interpreter distortion of
 the representation experiments, or when a supported strongly typed toolchain is
 available. Independent review remains mandatory before D1, M2/M3 candidate
 execution, or any containment claim.
+
+## 2026-08-01 scoped D1 implementation amendment
+
+[Decision 0006](0006-use-counterfactual-shadow-before-serving.md) permits local
+D1 implementation evidence for the same closed, reviewed M1 data IR. That path
+now uses a resource-limited subprocess and independent reference validation.
+This amendment does not authorize candidate-supplied code, operational traffic,
+sensitive traces, D2, or a hostile-code containment claim. Those retain the
+independent-review requirement above.

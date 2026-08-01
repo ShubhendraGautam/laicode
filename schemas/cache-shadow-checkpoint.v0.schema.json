@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-shadow-checkpoint.v0.schema.json",
+  "title": "LAIcode D1 cache shadow checkpoint v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_count",
+    "champion_result_id",
+    "challenger_result_id",
+    "champion_miss_ratio_ppm",
+    "challenger_miss_ratio_ppm",
+    "regression_ppm",
+    "hard_constraints_pass",
+    "action"
+  ],
+  "properties": {
+    "schema_version": { "const": "CacheShadowCheckpointV0" },
+    "event_count": { "type": "integer", "minimum": 1, "maximum": 4096 },
+    "champion_result_id": { "$ref": "#/$defs/content_id" },
+    "challenger_result_id": { "$ref": "#/$defs/content_id" },
+    "champion_miss_ratio_ppm": { "$ref": "#/$defs/ppm" },
+    "challenger_miss_ratio_ppm": { "$ref": "#/$defs/ppm" },
+    "regression_ppm": {
+      "type": "integer",
+      "minimum": -1000000,
+      "maximum": 1000000
+    },
+    "hard_constraints_pass": { "type": "boolean" },
+    "action": {
+      "enum": [
+        "continue_shadow",
+        "revoke_hard_constraint",
+        "revoke_regression",
+        "expire_without_promotion"
+      ]
+    }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "ppm": { "type": "integer", "minimum": 0, "maximum": 1000000 }
+  }
+}

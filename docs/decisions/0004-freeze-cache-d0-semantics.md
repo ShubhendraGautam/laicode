@@ -94,3 +94,10 @@ post-freeze generalization estimate impossible.
 Start a new schema/kernel version before adding variable object sizes, admission
 control, frequency aging, candidate-private state, concurrency, measured latency
 as a promotion metric, public traces, or D1 shadow execution.
+
+## 2026-08-01 D1 reuse note
+
+[Decision 0006](0006-use-counterfactual-shadow-before-serving.md) reuses these
+exact cache semantics in an independent counterfactual twin; it does not change
+the candidate language, metrics, state ownership, or tie-breaking. The new D1
+lease/checkpoint/report schemas version the lifecycle extension separately.

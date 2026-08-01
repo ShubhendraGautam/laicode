@@ -104,6 +104,9 @@ This is a gap hypothesis, not yet a novelty claim. See
   Python runtime choice and isolation requirements for the first prototype.
 - [Working prototype](docs/prototype.md) — exact semantics, run bundle,
   demonstrated result, reproduction, and limitations.
+- [Working cache-policy alternative](docs/working-alternative.md) — bounded
+  subprocess workers, counterfactual shadow leases, automatic revocation, and
+  imported-trace operation.
 
 ## Prototype quick start
 
@@ -120,6 +123,14 @@ reviewed LRU/FIFO/LFU strategies, selects under frozen operational and
 historical gates, freezes the D0 decision, consumes prospective and research
 audit evidence afterward, archives every input/result/decision, and verifies a
 fresh byte-identical replay.
+
+To run the next D1 milestone—offline selection followed by isolated
+counterfactual shadow, automatic regression revocation, and exact replay—use:
+
+```sh
+python3 -m laicode smoke-alternative \
+  examples/contracts/cache-policy-v0.json /tmp/laicode-alternative
+```
 
 Component checks remain available:
 
@@ -178,10 +189,11 @@ self-deploy authority to the current application.
 
 ## Current status
 
-**Working exploratory D0 prototype.** The closed M1/G1 strategy enumerator and
-external evaluator complete a deterministic search–evaluate–select–audit–replay
-loop. In the registered synthetic study, LFU passes the operational selection
-gates but regresses on the prospective recency-shift partition; that negative
-future result is retained and does not trigger deployment. Independent review,
-containment, confirmatory statistics, model-driven generation, and D1 execution
-remain open gates.
+**Working D0 selector and D1 counterfactual-shadow alternative.** The closed
+M1/G1 strategy enumerator completes a deterministic
+search–evaluate–select–audit–replay loop. A resource-leased subprocess runner can
+then shadow the selected artifact on an imported trace while the immutable
+original remains the only served champion. The default recency-shift demo
+automatically revokes LFU for regression. Independent review, syscall-level
+containment, confirmatory statistics, model-driven generation, network
+integration, and D2 canary execution remain open gates.

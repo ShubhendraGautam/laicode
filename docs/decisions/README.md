@@ -64,3 +64,4 @@ gate evidence the decision claims to satisfy.
 - [0003 — Start the control-plane prototype in Python](0003-prototype-runtime.md)
 - [0004 — Freeze deterministic cache semantics for prototype D0](0004-freeze-cache-d0-semantics.md)
 - [0005 — Use a hash-chained append-only ledger at D0](0005-use-hash-chained-ledger-at-d0.md)
+- [0006 — Require counterfactual shadow before served effects](0006-use-counterfactual-shadow-before-serving.md)

@@ -30,6 +30,15 @@ from laicode.prototype import (
     OFFLINE_DECISION_SCHEMA_VERSION,
     RUN_REPORT_RECORD_SCHEMA_VERSION,
 )
+from laicode.shadow import (
+    SHADOW_CHECKPOINT_SCHEMA_VERSION,
+    SHADOW_LEASE_SCHEMA_VERSION,
+    SHADOW_REPORT_RECORD_SCHEMA_VERSION,
+)
+from laicode.worker import (
+    WORKER_REQUEST_SCHEMA_VERSION,
+    WORKER_RESPONSE_SCHEMA_VERSION,
+)
 from laicode.provenance import (
     CANDIDATE_RECORD_SCHEMA_VERSION,
     LEDGER_RECORD_SCHEMA_VERSION,
@@ -43,7 +52,7 @@ SCHEMA_DIR = ROOT / "schemas"
 class SchemaArtifactTests(unittest.TestCase):
     def test_every_schema_is_strict_profile_json(self) -> None:
         paths = sorted(SCHEMA_DIR.glob("*.schema.json"))
-        self.assertGreaterEqual(len(paths), 20)
+        self.assertGreaterEqual(len(paths), 25)
         for path in paths:
             with self.subTest(path=path.name):
                 document = load_json_strict(path.read_bytes())
@@ -80,6 +89,15 @@ class SchemaArtifactTests(unittest.TestCase):
             ),
             "prototype-run-report-record.v0.schema.json": (
                 RUN_REPORT_RECORD_SCHEMA_VERSION
+            ),
+            "cache-worker-request.v0.schema.json": WORKER_REQUEST_SCHEMA_VERSION,
+            "cache-worker-response.v0.schema.json": WORKER_RESPONSE_SCHEMA_VERSION,
+            "cache-shadow-lease.v0.schema.json": SHADOW_LEASE_SCHEMA_VERSION,
+            "cache-shadow-checkpoint.v0.schema.json": (
+                SHADOW_CHECKPOINT_SCHEMA_VERSION
+            ),
+            "cache-shadow-run-report-record.v0.schema.json": (
+                SHADOW_REPORT_RECORD_SCHEMA_VERSION
             ),
             "evolution-contract.v0.schema.json": CONTRACT_SCHEMA_VERSION,
         }

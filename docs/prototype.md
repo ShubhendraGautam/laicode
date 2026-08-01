@@ -90,6 +90,9 @@ workflow claim only. It does not support:
 
 Candidate/query/churn/artifact/storage limits and contract expiry are enforced.
 CPU, wall-time, and memory are not independently isolated at D0; this is
-reported in every run. Before M2/M3 or D1, the open containment, resource
-isolation, statistical calibration, independent review, and recovery gates in
-the [design checklist](design-checklist.md) remain mandatory.
+reported in every D0 run. A separate
+[D1 counterfactual-shadow milestone](working-alternative.md) now adds bounded
+worker processes and revocation for the same closed IR. Before M2/M3, D2, or any
+production containment claim, the remaining syscall isolation, statistical
+calibration, independent review, and served-state recovery gates in the
+[design checklist](design-checklist.md) remain mandatory.

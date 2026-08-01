@@ -16,6 +16,7 @@ from .kernel import (
     compile_complete_program,
 )
 from .prototype import PrototypeError, replay_prototype, run_prototype
+from .shadow import ShadowError, replay_shadow, run_shadow
 
 __all__ = [
     "ContractValidationError",
@@ -32,4 +33,7 @@ __all__ = [
     "PrototypeError",
     "replay_prototype",
     "run_prototype",
+    "ShadowError",
+    "replay_shadow",
+    "run_shadow",
 ]

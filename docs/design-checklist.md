@@ -437,3 +437,24 @@ The checked boxes establish scoped prototype evidence, not full experimental or
 deployment readiness. The working run reaches
 `(R2, M1, G1, L0, D0; F0)`; broader mutation, learner updates, and deployment
 remain gated.
+
+## Prototype-v1 D1 implementation evidence
+
+These boxes record a narrow functional slice and do not satisfy the complete
+Gate 3 or Gate 8 exit criteria:
+
+- [x] Closed candidate artifacts execute in externally resource-limited worker
+  processes.
+- [x] Worker output is content-addressed and independently reference-validated.
+- [x] Champion and challenger maintain counterfactual twin cache states under
+  the same ordered workload.
+- [x] The challenger cannot serve effects or extend its event-count lease.
+- [x] Hard failure, worker failure, and registered regression fail closed for
+  the shadow.
+- [x] Regression revocation and non-regressing lease expiry are exercised.
+- [x] The exact original champion is verified after shadow revocation.
+- [x] The complete D0+D1 decision bundle replays byte for byte.
+- [ ] Independent systems/security review accepts operational D1 use.
+- [ ] Syscall/network isolation is demonstrated against hostile candidate code.
+- [ ] D2 human-authorized canary and served-state rollback are designed and
+  exercised.

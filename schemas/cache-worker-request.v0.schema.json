@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-worker-request.v0.schema.json",
+  "title": "LAIcode isolated cache worker request v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract", "artifact", "trace"],
+  "properties": {
+    "schema_version": { "const": "CacheWorkerRequestV0" },
+    "contract": { "$ref": "evolution-contract.v0.schema.json" },
+    "artifact": { "$ref": "cache-policy-artifact.v0.schema.json" },
+    "trace": { "$ref": "cache-trace.v0.schema.json" }
+  },
+  "$comment": "The worker recompiles and identity-checks the artifact against the supplied contract before executing it."
+}

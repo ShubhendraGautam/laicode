@@ -80,3 +80,11 @@ those questions would create false assurance.
 
 Revisit before multiple writers, remote workers, credentials, D1, retention of
 non-synthetic data, or any authenticated audit claim.
+
+## 2026-08-01 local D1 extension
+
+[Decision 0006](0006-use-counterfactual-shadow-before-serving.md) extends the
+event vocabulary for a local, single-writer, credential-free D1 shadow bundle.
+The integrity model is unchanged: it detects mutation against a pinned report
+but makes no authenticated non-repudiation claim. Multi-user, remote-worker,
+sensitive-data, and signing use remains review-gated.

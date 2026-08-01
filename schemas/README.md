@@ -12,6 +12,9 @@ manifests; the offline decision; evaluator meta-tests; and the final run report.
 Every object schema rejects unknown top-level and nested fields unless a field
 is explicitly documented as an open payload map.
 
+Prototype v1 adds strict isolated-worker request/response schemas and D1
+counterfactual-shadow lease, checkpoint, and report schemas.
+
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 
 - object fields sorted by Unicode scalar value;

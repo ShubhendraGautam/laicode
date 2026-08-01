@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/cache-shadow-lease.v0.schema.json",
+  "title": "LAIcode D1 cache shadow lease v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_run_report_id",
+    "contract_id",
+    "champion_artifact_id",
+    "challenger_artifact_id",
+    "trace_id",
+    "mode",
+    "served_artifact_id",
+    "maximum_events",
+    "minimum_events",
+    "checkpoint_interval",
+    "rollback_triggers",
+    "worker_limits",
+    "capabilities",
+    "candidate_may_extend_lease",
+    "served_effects_authorized"
+  ],
+  "properties": {
+    "schema_version": { "const": "CacheShadowLeaseV0" },
+    "source_run_report_id": { "$ref": "#/$defs/content_id" },
+    "contract_id": { "$ref": "#/$defs/content_id" },
+    "champion_artifact_id": { "$ref": "#/$defs/content_id" },
+    "challenger_artifact_id": { "$ref": "#/$defs/content_id" },
+    "trace_id": { "$ref": "#/$defs/content_id" },
+    "mode": { "const": "D1_counterfactual_stateful_shadow" },
+    "served_artifact_id": { "$ref": "#/$defs/content_id" },
+    "maximum_events": { "type": "integer", "minimum": 1, "maximum": 4096 },
+    "minimum_events": { "type": "integer", "minimum": 1, "maximum": 4096 },
+    "checkpoint_interval": { "type": "integer", "minimum": 1, "maximum": 4096 },
+    "rollback_triggers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hard_constraint_failure",
+        "miss_ratio_regression_ppm",
+        "worker_failure"
+      ],
+      "properties": {
+        "hard_constraint_failure": { "const": true },
+        "miss_ratio_regression_ppm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "worker_failure": { "const": true }
+      }
+    },
+    "worker_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpu_milliseconds",
+        "wall_milliseconds",
+        "memory_bytes",
+        "output_bytes",
+        "open_files",
+        "processes"
+      ],
+      "properties": {
+        "cpu_milliseconds": { "$ref": "#/$defs/positive" },
+        "wall_milliseconds": { "$ref": "#/$defs/positive" },
+        "memory_bytes": { "$ref": "#/$defs/positive" },
+        "output_bytes": { "$ref": "#/$defs/positive" },
+        "open_files": { "$ref": "#/$defs/positive" },
+        "processes": { "$ref": "#/$defs/positive" }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "filesystem",
+        "network",
+        "process",
+        "clock",
+        "randomness",
+        "environment",
+        "credentials",
+        "model",
+        "external_services"
+      ],
+      "properties": {
+        "filesystem": { "const": "deny" },
+        "network": { "const": "deny" },
+        "process": { "const": "deny" },
+        "clock": { "const": "deny" },
+        "randomness": { "const": "deny" },
+        "environment": { "const": "deny" },
+        "credentials": { "const": "deny" },
+        "model": { "const": "deny" },
+        "external_services": { "const": "deny" }
+      }
+    },
+    "candidate_may_extend_lease": { "const": false },
+    "served_effects_authorized": { "const": false }
+  },
+  "$defs": {
+    "content_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "positive": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    }
+  },
+  "$comment": "Cross-field validation binds served_artifact_id to the champion and requires minimum_events not to exceed maximum_events."
+}
