@@ -174,7 +174,8 @@ the final vocabulary is
 
 A0 is intentionally not a general-purpose language. It has no allocation,
 strings, maps, graphs, recursion, user-defined functions, mutation of input, or
-I/O. The next algorithm epoch should add one capability family at a time—first
-owned vectors and structured records, then functions/recursion, then strings or
-graph storage—while keeping independent oracles, complexity limits, transparent
+I/O. The separate [A1 collection epoch](collection-language.md) now adds bounded
+owned vectors and structured records without changing this kernel. Bounded
+functions/recursion and strings or graph storage remain later capability
+families, each requiring independent oracles, complexity limits, transparent
 lowering, and protected transfer tasks.

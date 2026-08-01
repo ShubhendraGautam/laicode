@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/collection-language-run-report-record.v1.schema.json",
+  "title": "Collection-language run report record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "report"],
+  "properties": {
+    "schema_version": { "const": "CollectionLanguageRunReportRecordV1" },
+    "report_id": { "$ref": "collection-language-defs.v1.schema.json#/$defs/content_id" },
+    "report": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "status", "experiment_manifest_id", "task_count", "case_count", "cycle_count", "final_vocabulary_id", "cycle_results", "platform_style_transfer", "record_tasks", "vector_tasks", "all_valid", "validity_scope", "generated_c_sources", "native_validation_required_for_compiled_claim", "official_platform_submission_performed", "limitations"],
+      "properties": {
+        "schema_version": { "const": "CollectionLanguageRunReportV1" },
+        "status": { "const": "complete" },
+        "experiment_manifest_id": { "$ref": "collection-language-defs.v1.schema.json#/$defs/content_id" },
+        "task_count": { "const": 7 }, "case_count": { "const": 224 }, "cycle_count": { "const": 3 },
+        "final_vocabulary_id": { "$ref": "collection-language-defs.v1.schema.json#/$defs/content_id" },
+        "cycle_results": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/cycle" } },
+        "platform_style_transfer": {
+          "type": "object", "additionalProperties": false, "required": ["remove_element", "move_zeroes"],
+          "properties": { "remove_element": { "$ref": "#/$defs/transfer" }, "move_zeroes": { "$ref": "#/$defs/transfer" } }
+        },
+        "record_tasks": { "const": ["remove_element"] },
+        "vector_tasks": { "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": { "$ref": "collection-language-defs.v1.schema.json#/$defs/identifier" } },
+        "all_valid": { "const": true }, "validity_scope": { "const": "trusted_interpreter_all_cycles" },
+        "generated_c_sources": { "const": 21 }, "native_validation_required_for_compiled_claim": { "const": true },
+        "official_platform_submission_performed": { "const": false },
+        "limitations": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  },
+  "$defs": {
+    "cycle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cycle", "vocabulary_id", "entry_count", "new_entry_id", "cases_passed", "total_dispatches"],
+      "properties": {
+        "cycle": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "vocabulary_id": { "$ref": "collection-language-defs.v1.schema.json#/$defs/content_id" },
+        "entry_count": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "new_entry_id": { "oneOf": [{ "$ref": "collection-language-defs.v1.schema.json#/$defs/content_id" }, { "type": "null" }] },
+        "cases_passed": { "const": 224 }, "total_dispatches": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "transfer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["partition", "cycle_0_dispatches", "cycle_2_dispatches", "dispatch_reduction", "all_cycles_valid"],
+      "properties": {
+        "partition": { "enum": ["protected_holdout", "postfreeze_audit"] },
+        "cycle_0_dispatches": { "type": "integer", "minimum": 1 }, "cycle_2_dispatches": { "type": "integer", "minimum": 1 },
+        "dispatch_reduction": { "type": "integer", "minimum": 1 }, "all_cycles_valid": { "const": true }
+      }
+    }
+  }
+}

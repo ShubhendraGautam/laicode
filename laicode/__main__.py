@@ -15,6 +15,14 @@ from .algorithm_benchmark import (
     validate_algorithm_native,
 )
 from .algorithm_language import AlgorithmLanguageError
+from .collection_benchmark import (
+    CollectionExperimentError,
+    replay_collection_experiment,
+    run_collection_experiment,
+    smoke_collection_language,
+    validate_collection_native,
+)
+from .collection_language import CollectionLanguageError
 from .cache import CacheError, generate_trace
 from .canonical import canonical_json_bytes
 from .contracts import ContractValidationError, load_contract
@@ -253,12 +261,79 @@ def _parser() -> argparse.ArgumentParser:
     )
     smoke_algorithm.add_argument("output")
     smoke_algorithm.add_argument("--compiler", default="cc")
+
+    run_collection = commands.add_parser(
+        "run-collection-experiment",
+        help="grow the A1 owned-vector and record language",
+    )
+    run_collection.add_argument("output")
+
+    replay_collection = commands.add_parser(
+        "replay-collection-experiment",
+        help="exactly replay an A1 collection-language bundle",
+    )
+    replay_collection.add_argument("bundle")
+
+    native_collection = commands.add_parser(
+        "validate-collection-native",
+        help="compile generated A1 C and run archived collection cases",
+    )
+    native_collection.add_argument("bundle")
+    native_collection.add_argument("output")
+    native_collection.add_argument("--compiler", default="cc")
+
+    smoke_collection = commands.add_parser(
+        "smoke-collection-language",
+        help="grow, replay, compile, and validate the A1 collection language",
+    )
+    smoke_collection.add_argument("output")
+    smoke_collection.add_argument("--compiler", default="cc")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "run-collection-experiment":
+            report = run_collection_experiment(args.output)
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"cases={report.case_count} cycles={report.cycle_count} "
+                f"valid={str(report.all_valid).lower()}"
+            )
+            return 0
+        if args.command == "replay-collection-experiment":
+            replay = replay_collection_experiment(args.bundle)
+            print(
+                f"replayed {replay.source_report_id} "
+                f"files={replay.files_verified} exact=true"
+            )
+            return 0
+        if args.command == "validate-collection-native":
+            report = validate_collection_native(
+                args.bundle,
+                args.output,
+                compiler=args.compiler,
+            )
+            print(
+                f"validated {report.report_id} compiler={report.compiler} "
+                f"translations={report.translations_passed} "
+                f"cases={report.cases_passed} valid={str(report.all_valid).lower()}"
+            )
+            return 0
+        if args.command == "smoke-collection-language":
+            report, replay, native = smoke_collection_language(
+                args.output,
+                compiler=args.compiler,
+            )
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"cases={report.case_count} cycles={report.cycle_count} "
+                f"files={replay.files_verified} exact=true "
+                f"native={native.report_id} translations={native.translations_passed} "
+                f"native_cases={native.cases_passed} valid=true"
+            )
+            return 0
         if args.command == "run-algorithm-experiment":
             report = run_algorithm_experiment(args.output)
             print(
@@ -569,6 +644,8 @@ def main(argv: list[str] | None = None) -> int:
         KernelError,
         AlgorithmExperimentError,
         AlgorithmLanguageError,
+        CollectionExperimentError,
+        CollectionLanguageError,
         MachineExperimentError,
         MachineLanguageError,
         PrototypeError,

@@ -30,8 +30,11 @@ started manually from the Actions tab. It:
 1. records the Python, C, GCC, Clang, and Node toolchains;
 2. runs the complete repository test suite;
 3. runs the default five-session `smoke-hardware-feedback` study; and
-4. grows, replays, compiles, and validates the A0 algorithm language; and
-5. uploads the complete hardware and algorithm evidence for 30 days.
+4. grows, replays, compiles, and validates the A0 algorithm language;
+5. grows, replays, compiles, and validates the A1 owned-collection language;
+   and
+6. uploads the complete hardware, algorithm, and collection evidence for 30
+   days.
 
 The unusual minute avoids the common load spike at the top of the hour. A
 nightly result is exploratory evidence tied to that ephemeral runner's pinned
@@ -63,4 +66,6 @@ Run the nightly research path locally with a fresh output location:
 
 ```sh
 python3 -m laicode smoke-hardware-feedback /tmp/laicode-nightly
+python3 -m laicode smoke-algorithm-language /tmp/laicode-algorithm-nightly
+python3 -m laicode smoke-collection-language /tmp/laicode-collection-nightly
 ```

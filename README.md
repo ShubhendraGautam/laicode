@@ -127,6 +127,9 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Visible algorithm language and validity laboratory](docs/algorithm-language.md)
   — typed arrays and control flow, learned cross-task intrinsics, execution
   traces, generated C11, and LeetCode-style local contract validation.
+- [Owned-vector and typed-record language](docs/collection-language.md) — bounded
+  constructed outputs, typed collection records, learned statement forms,
+  strict C11 lowering, and platform-style validity evidence.
 
 ## Prototype quick start
 
@@ -173,6 +176,16 @@ learned vocabulary lowerings, execution traces, generated C, deterministic
 oracle results, and native validation artifacts. These are local equivalent
 contracts rather than official platform submissions.
 
+Advance to the A1 collection epoch, where programs build owned vectors and
+typed records for Remove Element, Running Sum, and Move Zeroes-style contracts:
+
+```sh
+python3 -m laicode smoke-collection-language /tmp/laicode-collections
+```
+
+The A1 bundle preserves the same inspect–trace–compile–replay workflow while
+keeping inputs immutable and every owned vector bounded to 256 elements.
+
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not
 already exist:
@@ -209,7 +222,8 @@ python3 -m laicode construct-program \
 
 GitHub Actions runs the complete test suite on Python 3.10 and 3.14 for every
 pull request and push to `main`. A separate nightly workflow runs the replicated
-hardware-feedback study and retains its evidence for 30 days.
+hardware-feedback, A0 algorithm, and A1 collection-language studies and retains
+their evidence for 30 days.
 
 The validation command prints the SHA-256 epoch identity. The final two commands
 construct the same fixed-kernel artifact through R2 and R3 and print the same
@@ -258,13 +272,14 @@ self-deploy authority to the current application.
 ## Current status
 
 **Working D0 selector, D1 counterfactual-shadow alternative, H1 offline
-hardware-feedback lifecycle, and A0 typed algorithm language.** The closed
+hardware-feedback lifecycle, A0 typed algorithm language, and A1 owned-vector
+and record epoch.** The closed
 M1/G1 strategy enumerator completes a deterministic
 search–evaluate–select–audit–replay loop. A resource-leased subprocess runner can
 then shadow the selected artifact on an imported trace while the immutable
 original remains the only served champion. The default recency-shift demo
 automatically revokes LFU for regression. Independent review, syscall-level
 containment, confirmatory statistics, independent-machine hardware replication,
-automatic workload classification, general allocation/strings/graphs, official
+automatic workload classification, general heap allocation/strings/graphs, official
 online-judge submission, model-driven generation, network integration, and D2
 canary execution remain open gates.

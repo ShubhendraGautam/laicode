@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/collection-language-defs.v1.schema.json",
+  "title": "LAIcode A1 collection language shared definitions",
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$" },
+    "content_id": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "i64": { "type": "integer", "minimum": -9223372036854775808, "maximum": 9223372036854775807 },
+    "type_name": { "enum": ["i64", "bool", "array_i64", "vector_i64"] },
+    "expression": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "value"],
+          "properties": { "op": { "const": "const" }, "value": { "$ref": "#/$defs/i64" } }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "name"],
+          "properties": { "op": { "const": "var" }, "name": { "$ref": "#/$defs/identifier" } }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "arguments"],
+          "properties": {
+            "op": { "const": "len" },
+            "arguments": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/expression" } }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "arguments"],
+          "properties": {
+            "op": { "enum": ["get", "add", "sub", "max", "eq", "ne", "lt", "le", "gt", "ge"] },
+            "arguments": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/expression" } }
+          }
+        }
+      ]
+    },
+    "return_type": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "element_type"],
+          "properties": { "kind": { "const": "vector" }, "element_type": { "const": "i64" } }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "name", "fields"],
+          "properties": {
+            "kind": { "const": "record" },
+            "name": { "$ref": "#/$defs/identifier" },
+            "fields": {
+              "type": "array", "minItems": 2, "maxItems": 8,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["name", "type"],
+                "properties": { "name": { "$ref": "#/$defs/identifier" }, "type": { "enum": ["i64", "bool", "vector_i64"] } }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "statement": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "name", "value"],
+          "properties": { "op": { "enum": ["let", "assign"] }, "name": { "$ref": "#/$defs/identifier" }, "value": { "$ref": "#/$defs/expression" } }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "name", "capacity"],
+          "properties": { "op": { "const": "own_vector" }, "name": { "$ref": "#/$defs/identifier" }, "capacity": { "$ref": "#/$defs/expression" } }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "index", "start", "stop", "body"],
+          "properties": {
+            "op": { "const": "for_range" }, "index": { "$ref": "#/$defs/identifier" },
+            "start": { "$ref": "#/$defs/expression" }, "stop": { "$ref": "#/$defs/expression" },
+            "body": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/statement" } }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "condition", "then", "else"],
+          "properties": {
+            "op": { "const": "if" }, "condition": { "$ref": "#/$defs/expression" },
+            "then": { "type": "array", "items": { "$ref": "#/$defs/statement" } },
+            "else": { "type": "array", "items": { "$ref": "#/$defs/statement" } }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "vector", "value"],
+          "properties": { "op": { "const": "push" }, "vector": { "$ref": "#/$defs/identifier" }, "value": { "$ref": "#/$defs/expression" } }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "entry_id", "arguments"],
+          "properties": {
+            "op": { "const": "intrinsic" }, "entry_id": { "$ref": "#/$defs/content_id" },
+            "arguments": { "type": "array", "minItems": 3, "maxItems": 4, "items": { "$ref": "#/$defs/expression" } }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["op", "fields"],
+          "properties": {
+            "op": { "const": "return" },
+            "fields": {
+              "type": "array", "minItems": 1, "maxItems": 8,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["name", "value"],
+                "properties": { "name": { "$ref": "#/$defs/identifier" }, "value": { "$ref": "#/$defs/expression" } }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "result": {
+      "oneOf": [
+        { "type": "array", "maxItems": 256, "items": { "$ref": "#/$defs/i64" } },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["values", "length"],
+          "properties": {
+            "values": { "type": "array", "maxItems": 256, "items": { "$ref": "#/$defs/i64" } },
+            "length": { "type": "integer", "minimum": 0, "maximum": 256 }
+          }
+        }
+      ]
+    }
+  }
+}

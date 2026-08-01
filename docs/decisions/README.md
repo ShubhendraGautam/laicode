@@ -69,3 +69,4 @@ gate evidence the decision claims to satisfy.
 - [0008 — Separate learning curves from language comparisons](0008-separate-learning-curves-from-language-comparisons.md)
 - [0009 — Use replicated hardware feedback for target profiles](0009-use-replicated-hardware-feedback-for-target-profiles.md)
 - [0010 — Add a typed algorithm language and local validity laboratory](0010-add-a-typed-algorithm-language.md)
+- [0011 — Add bounded owned vectors and typed records](0011-add-owned-vectors-and-typed-records.md)

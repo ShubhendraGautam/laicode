@@ -17,6 +17,20 @@ from laicode.algorithm_language import (
     PROGRAM_SCHEMA_VERSION as ALGORITHM_PROGRAM_SCHEMA_VERSION,
     VOCABULARY_SCHEMA_VERSION as ALGORITHM_VOCABULARY_SCHEMA_VERSION,
 )
+from laicode.collection_benchmark import (
+    CASE_SET_SCHEMA_VERSION as COLLECTION_CASE_SET_SCHEMA_VERSION,
+    EXPERIMENT_SCHEMA_VERSION as COLLECTION_EXPERIMENT_SCHEMA_VERSION,
+    NATIVE_RECORD_SCHEMA_VERSION as COLLECTION_NATIVE_RECORD_SCHEMA_VERSION,
+    RUN_RECORD_SCHEMA_VERSION as COLLECTION_RUN_RECORD_SCHEMA_VERSION,
+    TASK_SCHEMA_VERSION as COLLECTION_TASK_SCHEMA_VERSION,
+    TRACE_SCHEMA_VERSION as COLLECTION_TRACE_SCHEMA_VERSION,
+    VALIDITY_SCHEMA_VERSION as COLLECTION_VALIDITY_SCHEMA_VERSION,
+)
+from laicode.collection_language import (
+    ENCODED_PROGRAM_SCHEMA_VERSION as ENCODED_COLLECTION_PROGRAM_SCHEMA_VERSION,
+    PROGRAM_SCHEMA_VERSION as COLLECTION_PROGRAM_SCHEMA_VERSION,
+    VOCABULARY_SCHEMA_VERSION as COLLECTION_VOCABULARY_SCHEMA_VERSION,
+)
 from laicode.canonical import load_json_strict
 from laicode.cache import (
     SIMULATION_SCHEMA_VERSION,
@@ -206,6 +220,34 @@ class SchemaArtifactTests(unittest.TestCase):
             ),
             "algorithm-native-validity-report-record.v0.schema.json": (
                 ALGORITHM_NATIVE_RECORD_SCHEMA_VERSION
+            ),
+            "collection-program.v1.schema.json": COLLECTION_PROGRAM_SCHEMA_VERSION,
+            "encoded-collection-program.v1.schema.json": (
+                ENCODED_COLLECTION_PROGRAM_SCHEMA_VERSION
+            ),
+            "collection-vocabulary.v1.schema.json": (
+                COLLECTION_VOCABULARY_SCHEMA_VERSION
+            ),
+            "collection-task-contract.v1.schema.json": (
+                COLLECTION_TASK_SCHEMA_VERSION
+            ),
+            "collection-case-set.v1.schema.json": (
+                COLLECTION_CASE_SET_SCHEMA_VERSION
+            ),
+            "collection-language-experiment.v1.schema.json": (
+                COLLECTION_EXPERIMENT_SCHEMA_VERSION
+            ),
+            "collection-validity-report.v1.schema.json": (
+                COLLECTION_VALIDITY_SCHEMA_VERSION
+            ),
+            "collection-execution-trace.v1.schema.json": (
+                COLLECTION_TRACE_SCHEMA_VERSION
+            ),
+            "collection-language-run-report-record.v1.schema.json": (
+                COLLECTION_RUN_RECORD_SCHEMA_VERSION
+            ),
+            "collection-native-validity-report-record.v1.schema.json": (
+                COLLECTION_NATIVE_RECORD_SCHEMA_VERSION
             ),
         }
         for filename, expected in expectations.items():

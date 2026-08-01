@@ -43,6 +43,7 @@ class ContinuousIntegrationConfigurationTests(unittest.TestCase):
         self.assertIn("workflow_dispatch:", workflow)
         self.assertIn("smoke-hardware-feedback", workflow)
         self.assertIn("smoke-algorithm-language", workflow)
+        self.assertIn("smoke-collection-language", workflow)
         self.assertIn("if: always()", workflow)
         self.assertIn("retention-days: 30", workflow)
         self.assertIn("timeout-minutes: 45", workflow)

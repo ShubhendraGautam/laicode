@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/collection-task-contract.v1.schema.json",
+  "title": "Collection-language task contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "partition", "description", "platform_contract", "parameters", "return_type", "maximum_input_elements", "oracle", "official_submission"],
+  "properties": {
+    "schema_version": { "const": "CollectionTaskContractV1" },
+    "task_id": { "$ref": "collection-language-defs.v1.schema.json#/$defs/identifier" },
+    "partition": { "enum": ["learning_cycle_1", "learning_cycle_2", "protected_holdout", "postfreeze_audit"] },
+    "description": { "type": "string", "minLength": 1 },
+    "platform_contract": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+    "parameters": { "const": [{ "name": "nums", "type": "array_i64" }, { "name": "target", "type": "i64" }] },
+    "return_type": { "$ref": "collection-language-defs.v1.schema.json#/$defs/return_type" },
+    "maximum_input_elements": { "const": 256 },
+    "oracle": { "const": "independent_python_reference_v1" },
+    "official_submission": { "const": false }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/collection-language-experiment.v1.schema.json",
+  "title": "Owned-vector and record language experiment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_name", "question", "kernel", "cycles", "learning_partitions", "protected_holdout", "postfreeze_audit", "validity_rule", "native_rule", "memory_rule", "authority", "registered_at"],
+  "properties": {
+    "schema_version": { "const": "CollectionLanguageExperimentV1" },
+    "experiment_name": { "const": "owned-vector-record-language-growth-a1-v1" },
+    "question": { "type": "string", "minLength": 1 },
+    "kernel": { "const": "OwnedVectorRecordKernelV1" },
+    "cycles": { "const": [0, 1, 2] },
+    "learning_partitions": {
+      "type": "object", "additionalProperties": false, "required": ["cycle_1", "cycle_2"],
+      "properties": {
+        "cycle_1": { "const": ["copy_array", "reverse_array"] },
+        "cycle_2": { "const": ["filter_positive", "filter_not_target"] }
+      }
+    },
+    "protected_holdout": { "const": ["remove_element", "running_sum"] },
+    "postfreeze_audit": { "const": ["move_zeroes"] },
+    "validity_rule": { "const": "all_cycle_interpreter_cases_match_independent_oracle" },
+    "native_rule": { "const": "strict_C11_translations_match_the_same_archived_cases" },
+    "memory_rule": { "const": "input_immutable_owned_vectors_bounded_to_256_i64_elements" },
+    "authority": { "const": "D0_offline_no_platform_submission_or_deployment" },
+    "registered_at": { "type": "string", "format": "date-time" }
+  }
+}

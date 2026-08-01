@@ -35,6 +35,12 @@ oracle cases; interpreter validity reports; generated-C validation; and exact
 growth-bundle replay. Platform-style tasks remain local compatibility evidence,
 not official judge submissions.
 
+A1 adds a distinct bounded owned-vector and typed-record kernel; transparent
+statement intrinsics; collection task, case, trace, validity, experiment, run,
+and native-report records; plus strict core and encoded program transports. Its
+fixed 256-element storage and one-vector-field record limit are epoch semantics,
+not general heap-allocation claims.
+
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 
 - object fields sorted by Unicode scalar value;
