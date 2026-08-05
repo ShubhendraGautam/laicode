@@ -85,7 +85,7 @@ Honest summary: **no discovery result exists.**
 | [`function_language.py`](../laicode/function_language.py) | A2 kernel: named functions, forward-only resolution, depth-bounded call graph. Sound. Its `learn_function_abstraction` is a **known R1 violation** — see below. |
 | [`function_benchmark.py`](../laicode/function_benchmark.py) | A2 task registry, cycle study, C11 lowering. Supplies the task set and vocabularies the synthesizer consumes. |
 | [`function_synthesis.py`](../laicode/function_synthesis.py) | Matched-budget enumerative search, primitive and learned arms, control family. The first component here that constructs programs. |
-| [`function_discovery.py`](../laicode/function_discovery.py) | Anti-unification over synthesized programs, consulting no table. **Not wired to any experiment and has no tests** — an R8 draft. |
+| [`function_discovery.py`](../laicode/function_discovery.py) | Anti-unification over synthesized programs, consulting no table. Tested, including that emptying `_DEFINITIONS` changes nothing about what it proposes. **Still wired to no experiment**, so it supports no claim yet. |
 
 ### The known R1 violation
 
@@ -103,8 +103,15 @@ result depending on it may be described as discovery.
 
 ## The open experiment
 
-1. Test `function_discovery.py` in isolation — anti-unification correctness,
-   placeholder renumbering, `covers` soundness. It currently has none.
+1. ~~Test `function_discovery.py` in isolation.~~ **Done.** 32 tests in
+   [`tests/test_function_discovery.py`](../tests/test_function_discovery.py).
+   They found one real defect: `_anti_unify` compared `op`, arity, `name`, and
+   `entry_id` but not `value`, so two differing constants took the structural
+   branch and were rebuilt as the left constant. The result was a
+   "generalization" that did not cover its own right-hand input. Because
+   `covers` is recomputed per task, this suppressed candidates rather than
+   admitting wrong ones — a recall defect, not a soundness one. Fixed, with the
+   defining property now asserted directly.
 2. Freeze the held-out task set and commit it. This precedes everything else
    (R2).
 3. Build a corpus by synthesizing solutions to training tasks under the
@@ -133,6 +140,14 @@ body is exactly one statement, so the discoverable space is single-statement
 accumulator bodies. Over that space, anti-unification will most plausibly
 surface `abs`- and `max`-shaped templates and little else — which lands
 directly on F3.
+
+A second narrowing, confirmed while testing rather than assumed:
+**discovery can only ever propose guarded abstractions.**
+`check_discovered_definition` requires at least two statements, and an
+unconditional template lowers to a single `return`, so it is always rejected. No
+purely arithmetic abstraction is reachable today, whatever the corpus contains.
+Both surviving hand-written definitions happen to be guarded, which is exactly
+why this went unnoticed — and exactly why it compounds F3.
 
 Either widen the template space before running the study, or accept in advance
 that a thin result is the expected outcome. Discovering this after the fact and

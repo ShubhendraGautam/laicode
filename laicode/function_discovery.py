@@ -107,7 +107,17 @@ def _anti_unify(
 
     if left == right:
         return left
-    if left.op == right.op and len(left.arguments) == len(right.arguments) and left.name == right.name and left.entry_id == right.entry_id:
+    # `value` has to be compared too. Without it two different constants take
+    # the structural branch -- same op, same arity, both names None -- and are
+    # rebuilt as the left constant, yielding a "generalization" that does not
+    # cover its own right-hand input.
+    if (
+        left.op == right.op
+        and len(left.arguments) == len(right.arguments)
+        and left.name == right.name
+        and left.value == right.value
+        and left.entry_id == right.entry_id
+    ):
         return Expression(
             left.op,
             tuple(_anti_unify(a, b, substitutions) for a, b in zip(left.arguments, right.arguments)),
