@@ -5,7 +5,7 @@
 The A0, A1, and A2 studies all follow the same shape: a human writes task
 programs, the learner notices a repeated form across two of them, and an encoder
 substitutes it back. That demonstrates the machinery is sound. It does not test
-the claim in the [research charter](research-charter.md) — that a model-native
+the claim in the [research charter](charter.md) — that a model-native
 representation and structured feedback help a machine **construct** programs
 more effectively.
 

@@ -59,16 +59,17 @@ gate evidence the decision claims to satisfy.
 
 ## Records
 
-- [0001 — Keep the judge outside candidate control](0001-external-judge.md)
-- [0002 — Separate governance, semantic kernel, and learned abstractions](0002-model-native-language-planes.md)
-- [0003 — Start the control-plane prototype in Python](0003-prototype-runtime.md)
-- [0004 — Freeze deterministic cache semantics for prototype D0](0004-freeze-cache-d0-semantics.md)
-- [0005 — Use a hash-chained append-only ledger at D0](0005-use-hash-chained-ledger-at-d0.md)
-- [0006 — Require counterfactual shadow before served effects](0006-use-counterfactual-shadow-before-serving.md)
-- [0007 — Study hardware-shaped vocabulary evolution](0007-study-hardware-shaped-vocabulary-evolution.md)
-- [0008 — Separate learning curves from language comparisons](0008-separate-learning-curves-from-language-comparisons.md)
-- [0009 — Use replicated hardware feedback for target profiles](0009-use-replicated-hardware-feedback-for-target-profiles.md)
-- [0010 — Add a typed algorithm language and local validity laboratory](0010-add-a-typed-algorithm-language.md)
-- [0011 — Add bounded owned vectors and typed records](0011-add-owned-vectors-and-typed-records.md)
+Records 0001-0011 governed the cache-policy control plane, the hardware and
+comparator tracks, and the A0/A1 language epochs. All of that code was removed
+when the project narrowed on 2026-08-05; those records are preserved at the
+`archive/pre-narrowing` tag rather than kept here, because a decision governing
+nothing is the kind of artifact rule R7 exists to prevent.
+
+Numbering stays monotonic so surviving cross-references keep their meaning.
+
 - [0012 — Add bounded user-defined functions and a static call graph](0012-add-bounded-user-defined-functions.md)
 - [0013 — Measure vocabulary transfer by matched-budget synthesis](0013-measure-vocabulary-transfer-by-synthesis.md)
+
+New records are subject to the acceptance rules in the
+[research charter](../charter.md); in particular R7, which forbids a decision
+record for a capability that does not run.

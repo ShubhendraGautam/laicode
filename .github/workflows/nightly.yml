@@ -1,4 +1,4 @@
-name: Nightly hardware study
+name: Nightly language and synthesis evidence
 
 on:
   schedule:
@@ -9,12 +9,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: nightly-hardware-${{ github.ref }}
+  group: nightly-evidence-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  hardware-feedback:
-    name: Replicated hardware feedback
+  language-and-synthesis:
+    name: Function language and synthesis transfer
     runs-on: ubuntu-24.04
     timeout-minutes: 45
 
@@ -29,14 +29,10 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: Record comparator toolchains
+      - name: Record required toolchains
         run: |
           python --version
-          python3 --version
           cc --version
-          gcc --version
-          clang --version
-          node --version
 
       - name: Run complete test suite
         env:
@@ -44,27 +40,6 @@ jobs:
           PYTHONHASHSEED: "0"
           TZ: UTC
         run: python -m unittest discover -v
-
-      - name: Run five-session hardware-feedback study
-        env:
-          LC_ALL: C.UTF-8
-          PYTHONHASHSEED: "0"
-          TZ: UTC
-        run: python -m laicode smoke-hardware-feedback "$RUNNER_TEMP/laicode-nightly"
-
-      - name: Run algorithm-language growth and native validity study
-        env:
-          LC_ALL: C.UTF-8
-          PYTHONHASHSEED: "0"
-          TZ: UTC
-        run: python -m laicode smoke-algorithm-language "$RUNNER_TEMP/laicode-algorithm-nightly"
-
-      - name: Run owned-collection language growth and native validity study
-        env:
-          LC_ALL: C.UTF-8
-          PYTHONHASHSEED: "0"
-          TZ: UTC
-        run: python -m laicode smoke-collection-language "$RUNNER_TEMP/laicode-collection-nightly"
 
       - name: Run bounded-function language growth and native validity study
         env:
@@ -78,7 +53,7 @@ jobs:
           LC_ALL: C.UTF-8
           PYTHONHASHSEED: "0"
           TZ: UTC
-        run: python -m laicode run-synthesis-experiment "$RUNNER_TEMP/laicode-synthesis-nightly"
+        run: python -m laicode smoke-function-synthesis "$RUNNER_TEMP/laicode-synthesis-nightly"
 
       - name: Retain nightly evidence
         if: always()
@@ -86,9 +61,6 @@ jobs:
         with:
           name: nightly-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/laicode-nightly/
-            ${{ runner.temp }}/laicode-algorithm-nightly/
-            ${{ runner.temp }}/laicode-collection-nightly/
             ${{ runner.temp }}/laicode-function-nightly/
             ${{ runner.temp }}/laicode-synthesis-nightly/
           if-no-files-found: warn

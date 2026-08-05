@@ -1,59 +1,34 @@
-# Prototype schema and canonicalization profile
+# Schema and canonicalization profile
 
 The JSON Schema files document transport shape. The trusted Python decoders also
 enforce cross-field authorization and transition rules that JSON Schema alone
-does not capture.
+does not capture. Every object schema rejects unknown top-level and nested
+fields unless a field is explicitly documented as an open payload map.
 
-The directory covers the prototype contract; complete and partial candidate
-programs; construction actions/results; cache traces, snapshots, simulations,
-and partition evaluations; evidence, promotion, and audit records; immutable
-candidate and append-only ledger records; experiment and implementation
-manifests; the offline decision; evaluator meta-tests; and the final run report.
-Every object schema rejects unknown top-level and nested fields unless a field
-is explicitly documented as an open payload map.
+The directory covers exactly two live studies. Schemas for the cache control
+plane, the hardware and comparator tracks, and the A0/A1 epochs were removed
+when the project narrowed on 2026-08-05 and are preserved at the
+`archive/pre-narrowing` tag. `tests/test_schemas.py` fails if a schema is
+present with no runtime constant behind it, so an orphan cannot reaccumulate
+here unnoticed.
 
-Prototype v1 adds strict isolated-worker request/response schemas and D1
-counterfactual-shadow lease, checkpoint, and report schemas.
+A2 covers the bounded-function call-graph kernel: transparent learned function
+abstractions carrying their exact archived definitions; function task, case,
+trace, validity, experiment, run, and native-report records; plus strict core
+and encoded program transports. Its eight-function, four-parameter, and
+depth-four limits and its forward-only call resolution are epoch semantics. The
+run record constrains dispatch change to zero, because an A2 abstraction must
+remove duplicated definitions without altering executed work.
 
-E-H0 adds schemas for pure 64-bit word pipelines, transparent learned
-superinstruction vocabularies, identity-separated weighted corpora, persistent
-learning cycles, full-cost partition evaluations, deterministic run reports,
-and supplemental generated-C host measurements.
+A2-S covers the matched-budget synthesis experiment: an experiment manifest,
+task contracts separating treatment from control, and a run record whose ratios
+are integer parts per million. The record marks a ratio as a lower bound
+whenever the compared arm stopped at its budget or returned a program that
+failed held-out cases, so a truncated or decoy run cannot be read as a solved
+one.
 
-B0 adds strict cross-language comparator manifests, trusted checksum reference
-results, deterministic generated-source package records, and noisy host reports
-covering LAIcode learning cycles, C11/GCC, C11/Clang, Python, and JavaScript.
-
-H1 adds a pinned CPU/OS/compiler target, replicated hardware-feedback study,
-paired aggregate evidence, pit-specific vocabulary activation/retirement
-profiles, offline lifecycle decisions, and replayable run reports. Raw timing is
-archived but remains outside canonical program semantics and deployment.
-
-A0 adds a typed structured algorithm language over signed integers and arrays;
-transparent cross-task expression intrinsics; task contracts and deterministic
-oracle cases; interpreter validity reports; generated-C validation; and exact
-growth-bundle replay. Platform-style tasks remain local compatibility evidence,
-not official judge submissions.
-
-A1 adds a distinct bounded owned-vector and typed-record kernel; transparent
-statement intrinsics; collection task, case, trace, validity, experiment, run,
-and native-report records; plus strict core and encoded program transports. Its
-fixed 256-element storage and one-vector-field record limit are epoch semantics,
-not general heap-allocation claims.
-
-A2 adds a distinct bounded-function call-graph kernel; transparent learned
-function abstractions carrying their exact archived definitions; function task,
-case, trace, validity, experiment, run, and native-report records; plus strict
-core and encoded program transports. Its eight-function, four-parameter, and
-depth-four limits and its forward-only call resolution are epoch semantics.
-The run record constrains dispatch change to zero, because an A2 abstraction
-must remove duplicated definitions without altering executed work.
-
-A2-S adds a matched-budget synthesis experiment manifest, synthesis task
-contracts separating treatment from control, and a run record whose ratios are
-integer parts per million. The record marks a ratio as a lower bound whenever
-the compared arm stopped at its budget or returned a program that failed
-held-out cases, so a truncated or decoy run cannot be read as a solved one.
+`function-language-defs.v2.schema.json` is a shared `$defs` bundle referenced by
+the others and carries no `schema_version` of its own.
 
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 

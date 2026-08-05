@@ -2,315 +2,104 @@
 
 [![CI](https://github.com/ShubhendraGautam/laicode/actions/workflows/ci.yml/badge.svg)](https://github.com/ShubhendraGautam/laicode/actions/workflows/ci.yml)
 
-LAIcode is a research project for **model-native programming and bounded,
-evidence-driven program evolution**. It explores whether machine learners can
-construct and improve typed executable programs through semantic actions and
-execution feedback, while an external contract declares what may change, what is
-protected, how improvement is measured, and what evidence permits deployment.
+LAIcode is a research project studying one question:
 
-The working thesis is:
+> Does the system discover abstractions nobody gave it, and do those
+> abstractions measurably reduce the cost of constructing programs it has never
+> seen?
 
-> An AI learner can improve how it constructs executable programs from semantic
-> execution evidence, while the evolving program remains unable to redefine
-> success, weaken its constraints, or directly deploy itself.
+A result requires both halves — **discovery** and **transfer**. Neither alone
+counts.
 
-This repository contains the research and system design plus a working
-prototype-v0 D0 control plane: strict evolution-contract validation, canonical
-identity, a fixed cache-policy semantic kernel, deterministic partitioned
-evaluation, constrained offline selection, an append-only lineage ledger, and
-byte-for-byte full-run replay. It makes no claim of safe autonomous deployment.
+## Status
 
-## Model-native programming vision
+**No discovery result exists yet.**
 
-LAIcode is not intended to be just an LLM repeatedly rewriting ordinary source
-files. Its learner-facing substrate should expose typed program states, holes,
-effects, proof obligations, local semantic transformations, reusable
-abstractions, traces, counterexamples, and resource outcomes.
+What runs today is a typed bounded-function kernel, a matched-budget enumerative
+synthesizer, and a frozen study comparing search cost with and without a learned
+vocabulary. That study's vocabulary comes from programs a person wrote, so it
+measures the value of good abstractions rather than their discovery — a
+limitation recorded in the study's own report record, not just in prose.
 
-An autoregressive model may still predict serialized tokens internally. The
-research claim is not that symbol prediction disappears; it is that prediction
-becomes one proposal mechanism inside an executable, verifier-grounded learning
-loop instead of the entire programming interface. The authoritative object is a
-canonical semantic program, while source text is one human-readable projection.
+The component that would close that gap,
+[`function_discovery.py`](laicode/function_discovery.py), performs
+anti-unification over synthesized programs and consults no table of known
+abstractions. It is written, untested, and wired to nothing. Under the project's
+own rules that makes it a draft, not a result.
 
-The project therefore studies two coupled questions:
+See the [research charter](docs/charter.md) for the acceptance rules, the open
+experiment, and the falsifiers registered before it runs.
 
-1. Does a model-native program representation and structured execution feedback
-   help machine learners construct, repair, transfer, and reuse programs more
-   effectively than source-text generation under matched budgets?
-2. Can those increasingly capable proposals be evaluated and deployed through a
-   candidate-inaccessible governance boundary?
+## Scope
 
-See [Model-native programming design](docs/model-native-language.md).
+This repository was narrowed on 2026-08-05. It previously also asked whether
+proposals could be evaluated and deployed through a candidate-inaccessible
+governance boundary, which licensed a cache-policy control plane, counterfactual
+shadow leases, an append-only ledger, cross-language benchmarks, hardware target
+profiles, and two superseded language epochs.
 
-## What “self-improving” means here
-
-LAIcode does not treat every source-code change as learning. A system counts as
-self-improving only when a closed loop:
-
-1. observes executions and outcomes;
-2. proposes a new implementation inside an explicitly permitted search space;
-3. evaluates it on evidence it cannot alter;
-4. rejects it if any hard constraint fails;
-5. promotes it through a bounded rollout; and
-6. demonstrates improvement on future, previously unseen workloads while fully
-   reporting search and evaluation cost.
-
-The candidate program is never the authority that decides whether it improved.
-
-## Research position
-
-Prior work already covers structured code generation, execution-guided program
-synthesis, learned abstraction libraries, language-supported hot swapping,
-runtime feedback, and synthesized or genetically improved variants. The research
-question is therefore much narrower than “a language an AI can learn” or
-“self-evolving software.” LAIcode studies whether a model-facing semantic IR and
-an **evolution contract** can jointly support this particular combination:
-
-- typed incremental program actions and structured semantic feedback;
-- typed/effect-checked learned abstractions with machine-checkable lowering to a
-  stable, verifier-grounded kernel;
-- first-class objectives, constraints, budgets, and mutable regions;
-- candidate-inaccessible, versioned evaluation authority;
-- immutable successor identity and complete evidence lineage;
-- staged sandbox, counterfactual shadow, canary, promotion, and recovery;
-- explicit treatment of evaluator overfitting, workload drift, and total
-  optimization cost.
-
-This is a gap hypothesis, not yet a novelty claim. See
-[Prior art](docs/prior-art.md).
-
-## Documents
-
-- [Research charter](docs/research-charter.md) — scope, definitions, research
-  questions, hypotheses, claims, and non-goals.
-- [Model-native programming design](docs/model-native-language.md) — learner-facing
-  representation, semantic actions, structured feedback, language growth, and
-  comparative experiments.
-- [System design](docs/system-design.md) — trust boundaries, language sketch,
-  components, candidate lifecycle, and data model.
-- [Threat model](docs/threat-model.md) — assets, adversaries, failure modes,
-  mitigations, representation/learning/authority axes, and stop conditions.
-- [Experiment protocol](docs/experiment-protocol.md) — baselines, dataset
-  separation, statistics, cost accounting, and reproducibility requirements.
-- [Design checklist](docs/design-checklist.md) — gates that must be satisfied
-  before implementation, experimentation, or deployment.
-- [Implementation status](docs/implementation-status.md) — the current gate
-  review, executable evidence, and remaining blockers.
-- [Decision records](docs/decisions/README.md) and
-  [Decision 0001](docs/decisions/0001-external-judge.md) — governance format and
-  why candidates cannot modify their own judge.
-- [Accepted Decision 0002](docs/decisions/0002-model-native-language-planes.md) —
-  separation of governance, stable semantics, and learned abstractions.
-- [Accepted Decision 0003](docs/decisions/0003-prototype-runtime.md) — scoped
-  Python runtime choice and isolation requirements for the first prototype.
-- [Working prototype](docs/prototype.md) — exact semantics, run bundle,
-  demonstrated result, reproduction, and limitations.
-- [Working cache-policy alternative](docs/working-alternative.md) — bounded
-  subprocess workers, counterfactual shadow leases, automatic revocation, and
-  imported-trace operation.
-- [Hardware-native evolving language](docs/hardware-native-language.md) — the
-  stronger R4/L2 goal, emergence criteria, first machine-language experiment,
-  and hardware-validation path.
-- [Working hardware-shaped language](docs/working-machine-language.md) — the
-  runnable learner, exact replay bundle, generated-C adapter, current results,
-  interface, and bounded claims.
-- [Cross-language benchmark laboratory](docs/language-benchmarks.md) — LAIcode
-  cycle curves plus checksum-matched C, Python, and JavaScript comparisons over
-  runtime, build, startup, memory, size, and variability.
-- [Replicated hardware-feedback lifecycle](docs/hardware-feedback.md) — repeated
-  matched host sessions, stability gates, target-specific vocabulary profiles,
-  primitive fallback, and exact decision replay.
-- [Continuous integration and nightly evidence](docs/continuous-integration.md)
-  — required Python compatibility tests plus a scheduled five-session hardware
-  study with retained evidence.
-- [Visible algorithm language and validity laboratory](docs/algorithm-language.md)
-  — typed arrays and control flow, learned cross-task intrinsics, execution
-  traces, generated C11, and LeetCode-style local contract validation.
-- [Owned-vector and typed-record language](docs/collection-language.md) — bounded
-  constructed outputs, typed collection records, learned statement forms,
-  strict C11 lowering, and platform-style validity evidence.
-- [Bounded-function and call-graph language](docs/function-language.md) — named
-  user functions, forward-only resolution that makes recursion unrepresentable,
-  learned function abstractions, and definition reduction at identical dispatch.
-- [Learned-vocabulary synthesis transfer](docs/synthesis-transfer.md) — the first
-  study here that searches for programs: matched-budget synthesis with and
-  without learned vocabulary on unseen tasks, with a control family measuring
-  what the vocabulary costs when it cannot help.
-
-## Prototype quick start
-
-Run the hardware-shaped language learner, exact replay, generated-C build, and
-host measurement with one command (the output path must not exist):
+That work is preserved at the `archive/pre-narrowing` tag and is not maintained
+on `main`. Governance returns when there is a capability that needs governing.
 
 ```sh
-python3 -m laicode smoke-machine-language /tmp/laicode-machine
+git checkout archive/pre-narrowing -- <path>
 ```
 
-The current language is canonical typed JSON over pure 64-bit word pipelines.
-Python implements the trusted learner/control plane and generated C11 is the
-first native measurement backend. See the [working language
-prototype](docs/working-machine-language.md) for the output layout, result, use
-case, and future UI.
+## Quick start
 
-The cache-policy D0/D1 prototype remains available separately.
+Python 3.10 standard library only; no third-party dependencies.
 
-Run the evolving-language and mature-language comparator suite with:
-
-```sh
-python3 -m laicode smoke-language-comparators /tmp/laicode-comparators
-```
-
-Turn five replicated comparator sessions into a conservative offline vocabulary
-profile for the current hardware target with:
-
-```sh
-python3 -m laicode smoke-hardware-feedback /tmp/laicode-feedback
-```
-
-The current profile resolver requires a registered workload pit. This command
-does not classify traffic or deploy the selected vocabulary.
-
-Grow and inspect the typed algorithm language, replay it exactly, compile it to
-C11, and validate binary-search, maximum-subarray, and two-sum-style contracts:
-
-```sh
-python3 -m laicode smoke-algorithm-language /tmp/laicode-algorithms
-```
-
-The bundle contains readable `.lai` programs for every cycle, canonical IR,
-learned vocabulary lowerings, execution traces, generated C, deterministic
-oracle results, and native validation artifacts. These are local equivalent
-contracts rather than official platform submissions.
-
-Advance to the A1 collection epoch, where programs build owned vectors and
-typed records for Remove Element, Running Sum, and Move Zeroes-style contracts:
-
-```sh
-python3 -m laicode smoke-collection-language /tmp/laicode-collections
-```
-
-The A1 bundle preserves the same inspect–trace–compile–replay workflow while
-keeping inputs immutable and every owned vector bounded to 256 elements.
-
-Advance to the A2 function epoch, where programs declare named helpers over a
-static call graph and the learner promotes whole functions into the vocabulary:
+Grow the A2 bounded-function language, replay it exactly, compile the generated
+C11, and validate every archived case (the output path must not exist):
 
 ```sh
 python3 -m laicode smoke-function-language /tmp/laicode-functions
 ```
 
-Calls resolve only against earlier declarations, so recursion is unrepresentable
-rather than merely rejected. A2 learned abstractions remove duplicated
-definitions while leaving interpreter dispatch exactly unchanged; that equality
-is asserted per case rather than reported as a speedup.
+Calls resolve only against earlier declarations, so recursion is
+unrepresentable rather than rejected. Learned abstractions remove duplicated
+definitions while interpreter dispatch stays exactly unchanged; that equality is
+asserted per case rather than reported as a speedup.
 
-Then measure whether that learned vocabulary helps a machine *construct* programs
-it has never seen, by running a synthesizer with and without it under one budget:
+Run the matched-budget synthesis transfer study:
 
 ```sh
 python3 -m laicode smoke-function-synthesis /tmp/laicode-synthesis
 ```
 
-Learned vocabulary cuts search by orders of magnitude on tasks that need it and
-costs 7-13% more on control tasks that cannot use it. Both figures are reported;
-neither is a deployment claim.
+Under one enumeration order and one budget, learned vocabulary cuts search on
+treatment tasks and costs 7–13% more on control tasks that cannot use it. Both
+figures are reported. The mechanism is relocation, not compression: vocabulary
+moves a solution out of the conditional-statement pool into the far smaller
+assignment pool. Neither figure is a deployment claim, and neither is evidence
+of discovery.
 
-The current implementation uses only the Python 3.10 standard library. Run and
-exactly replay the complete workflow with one command; the output path must not
-already exist:
-
-```sh
-python3 -m laicode smoke-prototype \
-  examples/contracts/cache-policy-v0.json /tmp/laicode-prototype
-```
-
-The command validates the evaluator before candidate search, enumerates the
-reviewed LRU/FIFO/LFU strategies, selects under frozen operational and
-historical gates, freezes the D0 decision, consumes prospective and research
-audit evidence afterward, archives every input/result/decision, and verifies a
-fresh byte-identical replay.
-
-To run the next D1 milestone—offline selection followed by isolated
-counterfactual shadow, automatic regression revocation, and exact replay—use:
-
-```sh
-python3 -m laicode smoke-alternative \
-  examples/contracts/cache-policy-v0.json /tmp/laicode-alternative
-```
-
-Component checks remain available:
+Component checks:
 
 ```sh
 python3 -m unittest discover -v
-python3 -m laicode validate-contract examples/contracts/cache-policy-v0.json
-python3 -m laicode compile-program \
-  examples/contracts/cache-policy-v0.json examples/programs/lru-v0.json
-python3 -m laicode construct-program \
-  examples/contracts/cache-policy-v0.json examples/actions/fill-lru-v0.json
+python3 -m laicode --help
 ```
 
-GitHub Actions runs the complete test suite on Python 3.10 and 3.14 for every
-pull request and push to `main`. A separate nightly workflow runs the replicated
-hardware-feedback, A0 algorithm, A1 collection-language, and A2 function-language
-studies and retains their evidence for 30 days.
+GitHub Actions runs the suite on Python 3.10 and 3.14 for every pull request and
+push to `main`. A nightly job runs the language and synthesis studies and retains
+their evidence for 30 days.
 
-The validation command prints the SHA-256 epoch identity. The final two commands
-construct the same fixed-kernel artifact through R2 and R3 and print the same
-artifact identity. Add `--canonical` to inspect the exact bytes being hashed.
+## Documents
 
-## Experimental scope
+- [Research charter](docs/charter.md) — the question, the eight acceptance
+  rules, current state, the open experiment, and its falsifiers.
+- [Bounded-function and call-graph language](docs/function-language.md) — the A2
+  kernel: named functions, forward-only resolution, static call graph.
+- [Learned-vocabulary synthesis transfer](docs/synthesis-transfer.md) — the
+  matched-budget study, its control family, and its recorded limitations.
+- [Prior art](docs/prior-art.md) — a seed map, not a dated systematic corpus.
+- [Decision records](docs/decisions/README.md) — the two decisions governing
+  code that still exists.
 
-The working D0 prototype evolves a pure, deterministic target with an exact
-validity oracle and outcome simulator. Later experiments should separate:
+## Claims
 
-1. select among predefined strategies;
-2. tune strategy parameters;
-3. apply typed or grammar-constrained program rewrites;
-4. construct the same restricted IR through incremental typed actions; and
-5. use an LLM for those actions without broadening candidate authority.
-
-Each stage must use the same candidate ledger and promotion protocol. This
-separates the value of the runtime and evolution contract from the value of any
-particular generator. A separate representation experiment compares
-unconstrained and constrained textual projections of the same kernel, complete
-typed IR, and incremental actions while holding semantic scope and feedback
-fixed. A second experiment holds the action interface fixed while varying scalar,
-counterexample, trace, and proof/resource feedback.
-
-The first benchmark should contain changing workload distributions, because
-optimizing repeatedly on a stationary toy benchmark does not demonstrate
-continual improvement. A simulated cache-eviction policy is the current
-recommended target: validity invariants are exact, policy quality has delayed
-effects, standard baselines exist, and access traces can shift over time. A
-deterministic data-transformation engine is the planned second domain for exact
-whole-output equivalence and structural rewrite experiments.
-
-## Core safety rule
-
-```text
-candidate may change the solution
-learner may add checked abstractions that lower to the stable kernel
-learner may not redefine primitive semantics within an epoch
-candidate may not change the judge
-```
-
-“Deploy once” therefore means deploying a stable supervisory control plane and
-an evolvable application plane. It never means granting arbitrary self-write or
-self-deploy authority to the current application.
-
-## Current status
-
-**Working D0 selector, D1 counterfactual-shadow alternative, H1 offline
-hardware-feedback lifecycle, A0 typed algorithm language, A1 owned-vector
-and record epoch, and A2 bounded-function call-graph epoch.** The closed
-M1/G1 strategy enumerator completes a deterministic
-search–evaluate–select–audit–replay loop. A resource-leased subprocess runner can
-then shadow the selected artifact on an imported trace while the immutable
-original remains the only served champion. The default recency-shift demo
-automatically revokes LFU for regression. Independent review, syscall-level
-containment, confirmatory statistics, independent-machine hardware replication,
-automatic workload classification, general heap allocation/strings/graphs,
-recursion, official
-online-judge submission, model-driven generation, network integration, and D2
-canary execution remain open gates.
+No novelty claim is authorized. Library-learning systems already perform
+abstraction discovery with stronger learners. Any differentiator here would rest
+on the governance boundary, which is exactly what has been deferred until there
+is something to govern.

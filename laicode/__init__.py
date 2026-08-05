@@ -1,39 +1,37 @@
-"""LAIcode prototype control-plane primitives."""
+"""LAIcode abstraction-discovery research kernel."""
 
-from .contracts import (
-    ContractValidationError,
-    ValidatedContract,
-    load_contract,
-    validate_contract,
+from .function_discovery import (
+    DiscoveryError,
+    discover_abstractions,
+    discovered_entry,
 )
-from .kernel import (
-    ACTION_SCHEMA_VERSION,
-    KERNEL_VERSION,
-    CandidateArtifact,
-    CommitError,
-    ConstructionSession,
-    KernelError,
-    compile_complete_program,
+from .function_language import (
+    FunctionLanguageError,
+    FunctionProgram,
+    FunctionVocabulary,
+    execute_program,
+    render_program,
+    validate_program,
 )
-from .prototype import PrototypeError, replay_prototype, run_prototype
-from .shadow import ShadowError, replay_shadow, run_shadow
+from .function_synthesis import (
+    SynthesisError,
+    replay_synthesis_experiment,
+    run_synthesis_experiment,
+    synthesize,
+)
 
 __all__ = [
-    "ContractValidationError",
-    "ValidatedContract",
-    "load_contract",
-    "validate_contract",
-    "ACTION_SCHEMA_VERSION",
-    "KERNEL_VERSION",
-    "CandidateArtifact",
-    "CommitError",
-    "ConstructionSession",
-    "KernelError",
-    "compile_complete_program",
-    "PrototypeError",
-    "replay_prototype",
-    "run_prototype",
-    "ShadowError",
-    "replay_shadow",
-    "run_shadow",
+    "DiscoveryError",
+    "discover_abstractions",
+    "discovered_entry",
+    "FunctionLanguageError",
+    "FunctionProgram",
+    "FunctionVocabulary",
+    "execute_program",
+    "render_program",
+    "validate_program",
+    "SynthesisError",
+    "replay_synthesis_experiment",
+    "run_synthesis_experiment",
+    "synthesize",
 ]

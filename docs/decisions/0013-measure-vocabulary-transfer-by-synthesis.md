@@ -13,7 +13,7 @@ task programs, the learner extracts a repeated form, and an encoder substitutes
 it back. Every reported "transfer" is therefore a statement about an encoder,
 not about problem solving. The programs were already written.
 
-The [research charter](../research-charter.md) asks whether a model-native
+The [research charter](../charter.md) asks whether a model-native
 representation helps a machine **construct** programs. No study in this
 repository answered that, because no study searched for a program.
 
