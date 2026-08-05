@@ -112,8 +112,30 @@ result depending on it may be described as discovery.
    `covers` is recomputed per task, this suppressed candidates rather than
    admitting wrong ones — a recall defect, not a soundness one. Fixed, with the
    defining property now asserted directly.
-2. Freeze the held-out task set and commit it. This precedes everything else
-   (R2).
+2. ~~Freeze the held-out task set and commit it.~~ **Done**, in a commit that
+   precedes any discovery run (R2). See
+   [`discovery_experiment.py`](../laicode/discovery_experiment.py); the split's
+   content id is asserted against a literal in
+   [`tests/test_discovery_experiment.py`](../tests/test_discovery_experiment.py),
+   so the population or seed cannot change after a result exists without the
+   change appearing in a diff.
+
+   Fourteen single-pass fold tasks, split by deterministic permutation under a
+   committed seed rather than by hand. No task is labelled with the abstraction
+   it requires — that labelling is what made A2-S circular.
+
+   | Half | Tasks |
+   | --- | --- |
+   | Training | `sum_shifted`, `max_shifted`, `sum_greater_than_target`, `sum_positive_part`, `count_non_negative`, `count_greater_than_target`, `max_element` |
+   | Held-out | `sum_all`, `sum_less_than_target`, `count_equal_to_target`, `count_all`, `sum_absolute_deviation`, `count_less_than_target`, `min_element` |
+
+   The draw is favourable to the experiment being *informative*, not to it
+   succeeding. Training holds both `max` shapes and four `>`-guarded tasks, so
+   there is real structure to find. Held-out holds `min_element`, whose guard
+   runs the opposite direction, plus `<` and `==` guards, two unconditional
+   tasks, and `sum_absolute_deviation`, which is not expressible as a single
+   guarded assignment over add/sub at all. F2 is a live outcome: a discovered
+   `max` may well not transfer to any of them.
 3. Build a corpus by synthesizing solutions to training tasks under the
    **primitive** vocabulary only. A corpus of hand-written programs reproduces
    the R1 violation with extra steps.
