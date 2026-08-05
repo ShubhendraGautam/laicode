@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/synthesis-task-contract.v2.schema.json",
+  "title": "LAIcode A2-S synthesis task contract v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "family", "description", "requires_learned_vocabulary", "skeleton", "training_cases", "heldout_cases", "oracle"],
+  "properties": {
+    "schema_version": { "const": "SynthesisTaskContractV2" },
+    "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+    "family": { "enum": ["treatment", "control"] },
+    "description": { "type": "string", "minLength": 1 },
+    "requires_learned_vocabulary": { "type": "boolean" },
+    "skeleton": { "const": "AccumulatorFoldSkeletonV2" },
+    "training_cases": { "type": "integer", "minimum": 1 },
+    "heldout_cases": { "type": "integer", "minimum": 1 },
+    "oracle": { "const": "independent_python_reference_v2" }
+  },
+  "$comment": "A control task is solvable with add and sub alone, so the learned vocabulary cannot shorten its solution and can only add search cost. Control tasks exist to keep a favourable result falsifiable."
+}

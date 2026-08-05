@@ -1,6 +1,6 @@
 # Implementation status
 
-**Status:** working D0/D1 cache alternative, E-H0/A0/A1/A2 evolving languages, B0 comparator laboratory, and H1 hardware-feedback lifecycle
+**Status:** working D0/D1 cache alternative, E-H0/A0/A1/A2 evolving languages, A2-S synthesis transfer, B0 comparator laboratory, and H1 hardware-feedback lifecycle
 **Reviewed against:** [design checklist](design-checklist.md) on 2026-08-01
 
 The checklist is an evidence-gate system, not a backlog. The prototype now
@@ -17,7 +17,7 @@ full gate, the research program, or deployment readiness is complete.
 | Gate 3 — root of trust | partial D1 evidence | Closed artifacts execute in a subprocess with external CPU/wall/address-space/output/file/process limits, a sanitized environment, strict worker protocol, and independent reference validation. There is no syscall/network sandbox, signing service, hostile native-code claim, or production containment report. |
 | Gate 4 — evaluator integrity | exploratory D0 slice implemented | Five identity-separated partitions, aggregate disclosure, one-shot post-freeze audit, exact integer metrics, an eight-case evaluator meta-suite, shields/fallbacks, query budgets, and partition-substitution tests exist. Statistical calibration, leakage analysis, tails/slices, and confirmatory power remain open. |
 | Gate 5 — lifecycle/provenance | local D0 slice implemented | Content-derived candidates/artifacts, complete lifecycle events, canonical JSONL hash chaining, locked/fsynced appends, mutation/reorder/truncation tests, and exact decision replay exist. H1 adds target/pit-specific activation and retirement records while preserving excluded entries and negative evidence. Authenticated remote provenance and a full deploy/rollback state machine do not. |
-| Gate 6 — experiments | seven exploratory manifests implemented | Cache D0, machine-language E-H0, comparator B0, hardware-feedback H1, algorithm-language A0, collection-language A1, and function-language A2 freeze distinct questions, protected partitions, baselines, fairness rules, metrics, and replay commands. A1 separates indexed/conditional-append learning tasks, protected Remove Element/Running Sum holdouts, and a post-freeze Move Zeroes audit. A2 separates absolute-magnitude and maximum-tracking learning tasks, protected Highest Altitude/total-deviation holdouts, and a post-freeze maximum-increasing-difference audit. None satisfies confirmatory design requirements. |
+| Gate 6 — experiments | eight exploratory manifests implemented | Cache D0, machine-language E-H0, comparator B0, hardware-feedback H1, algorithm-language A0, collection-language A1, and function-language A2 freeze distinct questions, protected partitions, baselines, fairness rules, metrics, and replay commands. A1 separates indexed/conditional-append learning tasks, protected Remove Element/Running Sum holdouts, and a post-freeze Move Zeroes audit. A2 separates absolute-magnitude and maximum-tracking learning tasks, protected Highest Altitude/total-deviation holdouts, and a post-freeze maximum-increasing-difference audit. A2-S is the first manifest here that freezes a *causal* comparison: one search procedure, one budget, two arms differing only in available vocabulary, with a control family of tasks the vocabulary cannot help. None satisfies confirmatory design requirements. |
 | Gate 7 — cost | expanded exploratory evidence | E-H0 charges ALU, dispatch, definition, verification, compilation, encoded bytes, and library bytes. B0 archives raw runtime/build/startup distributions, normalized throughput, variability, source/artifact size, and peak RSS. H1 aggregates paired runtime gains but requires deterministic dispatch-token reduction before promotion. A0/A1 report exact interpreter dispatch/step changes and generated/native artifact identities without making a native speed claim. A1 additionally freezes owned-capacity limits but does not measure allocation or copying cost beyond dispatch/steps. A2 measures a different axis entirely: it reports definition statements as the improvement metric and *requires* dispatch to be exactly unchanged, treating any change as an encoding defect rather than a result. Call-frame and stack cost are not modelled. Energy, runtime-installation size, hardware counters, and human effort remain unmeasured. |
 | Gate 8 — deployment/recovery | D1 shadow slice implemented | An event-count lease runs an independent counterfactual twin, monitors hard constraints and regression externally, revokes a failing challenger, and verifies the original champion remained unchanged. No challenger serves effects; D2 canary, wall-clock leases, and served-state rollback remain prohibited. |
 | Gate 9 — data/governance | synthetic-only slice | All traces are deterministic synthetic data. Ownership roles, incident process, and release governance remain open. |
@@ -106,6 +106,25 @@ statements at zero dispatch change. Two functions are deliberately not learned:
 protected and audit tasks. Twenty-one C sources are generated; 13 representative
 translations pass 416 native cases with checksums identical across all cycles.
 
+The [learned-vocabulary synthesis transfer](synthesis-transfer.md) study is the
+first here that searches for programs rather than checking substitution into
+hand-written ones. Under one matched budget and one enumeration order, learned
+vocabulary reduces search on unseen treatment tasks by 7,495x, at least 3,489x,
+and 20.5x twice, while costing 6.8% to 13.0% more on three control tasks that
+cannot use it — where both arms return identical programs. The mechanism is
+relocation rather than compression: vocabulary moves a solution out of the
+conditional-statement pool into the far smaller assignment pool. Two findings
+cut against a clean story and are recorded in data, not prose: the primitive
+arm's hit on maximum absolute deviation fails held-out cases, making its cost a
+lower bound flagged by `ratio_is_lower_bound`, and the vocabulary tax is
+asserted by the test suite so a future change cannot make it silently vanish.
+Search runs over compiled closures for speed, but every reported solution is
+materialized as a real `FunctionProgram`, validated by the kernel, and
+re-executed by the trusted interpreter; the fast path may find but never
+certify. The learned vocabulary itself still comes from hand-written training
+programs, so this shows the value of good abstractions, not their unaided
+discovery.
+
 The implementation has strict schemas for the contract, kernel/action/state,
 traces, snapshots, simulation results, partition evaluations, evidence catalog,
 candidate and ledger records, comparisons, audit, experiment/implementation
@@ -147,10 +166,18 @@ manifests, offline decision, evaluator meta-report, and run report.
   add pure first-order functions over a forward-only, depth-bounded call graph
   with transparent learned function abstractions, measured by definition
   reduction at provably unchanged dispatch.
+- [Decision 0013](decisions/0013-measure-vocabulary-transfer-by-synthesis.md):
+  A2-S must measure learned-vocabulary value by matched-budget synthesis on
+  unseen tasks, must carry a control family, and must report the vocabulary's
+  cost alongside its benefit.
 
 ## Next safe frontier
 
 Keep all learned-language authority at D0 and cache challenger authority at D1.
+The next synthesis frontier is closing the loop: a synthesizer that produces the
+training programs its own learner then abstracts from, so discovery of
+abstractions is measured rather than assumed. Until that exists, no claim of
+autonomous abstraction discovery is authorized.
 The next A3 language frontier is depth-bounded recursion with an explicit budget
 and separate interpreter and native evidence that the budget holds, followed by
 collection-returning functions joining the A1 and A2 kernels, and then strings or

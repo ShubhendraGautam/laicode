@@ -133,6 +133,10 @@ This is a gap hypothesis, not yet a novelty claim. See
 - [Bounded-function and call-graph language](docs/function-language.md) — named
   user functions, forward-only resolution that makes recursion unrepresentable,
   learned function abstractions, and definition reduction at identical dispatch.
+- [Learned-vocabulary synthesis transfer](docs/synthesis-transfer.md) — the first
+  study here that searches for programs: matched-budget synthesis with and
+  without learned vocabulary on unseen tasks, with a control family measuring
+  what the vocabulary costs when it cannot help.
 
 ## Prototype quick start
 
@@ -200,6 +204,17 @@ Calls resolve only against earlier declarations, so recursion is unrepresentable
 rather than merely rejected. A2 learned abstractions remove duplicated
 definitions while leaving interpreter dispatch exactly unchanged; that equality
 is asserted per case rather than reported as a speedup.
+
+Then measure whether that learned vocabulary helps a machine *construct* programs
+it has never seen, by running a synthesizer with and without it under one budget:
+
+```sh
+python3 -m laicode smoke-function-synthesis /tmp/laicode-synthesis
+```
+
+Learned vocabulary cuts search by orders of magnitude on tasks that need it and
+costs 7-13% more on control tasks that cannot use it. Both figures are reported;
+neither is a deployment claim.
 
 The current implementation uses only the Python 3.10 standard library. Run and
 exactly replay the complete workflow with one command; the output path must not

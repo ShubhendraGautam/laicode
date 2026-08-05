@@ -31,6 +31,13 @@ from .function_benchmark import (
     validate_function_native,
 )
 from .function_language import FunctionLanguageError
+from .function_synthesis import (
+    REGISTERED_BUDGET,
+    SynthesisError,
+    replay_synthesis_experiment,
+    run_synthesis_experiment,
+    smoke_function_synthesis,
+)
 from .cache import CacheError, generate_trace
 from .canonical import canonical_json_bytes
 from .contracts import ContractValidationError, load_contract
@@ -323,6 +330,27 @@ def _parser() -> argparse.ArgumentParser:
     )
     smoke_function.add_argument("output")
     smoke_function.add_argument("--compiler", default="cc")
+
+    run_synthesis = commands.add_parser(
+        "run-synthesis-experiment",
+        help="compare primitive and learned vocabulary search cost on unseen tasks",
+    )
+    run_synthesis.add_argument("output")
+    run_synthesis.add_argument("--budget", type=int, default=REGISTERED_BUDGET)
+
+    replay_synthesis = commands.add_parser(
+        "replay-synthesis-experiment",
+        help="exactly replay an A2-S synthesis bundle",
+    )
+    replay_synthesis.add_argument("bundle")
+    replay_synthesis.add_argument("--budget", type=int, default=REGISTERED_BUDGET)
+
+    smoke_synthesis = commands.add_parser(
+        "smoke-function-synthesis",
+        help="run and exactly replay the A2-S synthesis transfer study",
+    )
+    smoke_synthesis.add_argument("output")
+    smoke_synthesis.add_argument("--budget", type=int, default=REGISTERED_BUDGET)
     return parser
 
 
@@ -407,6 +435,31 @@ def main(argv: list[str] | None = None) -> int:
                 f"files={replay.files_verified} exact=true "
                 f"native={native.report_id} translations={native.translations_passed} "
                 f"native_cases={native.cases_passed} valid=true"
+            )
+            return 0
+        if args.command == "run-synthesis-experiment":
+            report = run_synthesis_experiment(args.output, budget=args.budget)
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"budget={report.budget} "
+                f"treatment_median_ppm={report.treatment_median_ratio_ppm} "
+                f"control_median_ppm={report.control_median_ratio_ppm}"
+            )
+            return 0
+        if args.command == "replay-synthesis-experiment":
+            replay = replay_synthesis_experiment(args.bundle, budget=args.budget)
+            print(
+                f"replayed {replay.source_report_id} "
+                f"files={replay.files_verified} exact=true"
+            )
+            return 0
+        if args.command == "smoke-function-synthesis":
+            report, replay = smoke_function_synthesis(args.output, budget=args.budget)
+            print(
+                f"complete {report.report_id} tasks={report.task_count} "
+                f"budget={report.budget} files={replay.files_verified} exact=true "
+                f"treatment_median_ppm={report.treatment_median_ratio_ppm} "
+                f"control_median_ppm={report.control_median_ratio_ppm}"
             )
             return 0
         if args.command == "run-algorithm-experiment":
@@ -723,6 +776,7 @@ def main(argv: list[str] | None = None) -> int:
         CollectionLanguageError,
         FunctionExperimentError,
         FunctionLanguageError,
+        SynthesisError,
         MachineExperimentError,
         MachineLanguageError,
         PrototypeError,

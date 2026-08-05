@@ -71,3 +71,4 @@ gate evidence the decision claims to satisfy.
 - [0010 — Add a typed algorithm language and local validity laboratory](0010-add-a-typed-algorithm-language.md)
 - [0011 — Add bounded owned vectors and typed records](0011-add-owned-vectors-and-typed-records.md)
 - [0012 — Add bounded user-defined functions and a static call graph](0012-add-bounded-user-defined-functions.md)
+- [0013 — Measure vocabulary transfer by matched-budget synthesis](0013-measure-vocabulary-transfer-by-synthesis.md)

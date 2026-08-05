@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/synthesis-experiment.v2.schema.json",
+  "title": "LAIcode A2-S synthesis transfer experiment manifest v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_name", "question", "kernel", "skeleton", "search", "arms", "matched_budget_candidates", "metric", "treatment_tasks", "control_tasks", "control_rule", "verification_rule", "generalization_rule", "vocabulary_provenance", "authority", "registered_at"],
+  "properties": {
+    "schema_version": { "const": "SynthesisExperimentV2" },
+    "experiment_name": { "const": "learned-vocabulary-synthesis-transfer-a2s-v1" },
+    "question": { "type": "string", "minLength": 1 },
+    "kernel": { "const": "CallGraphFunctionKernelV2" },
+    "skeleton": { "const": "AccumulatorFoldSkeletonV2" },
+    "search": { "const": "SizeOrderedObservationalSearchV2" },
+    "arms": { "const": ["primitive", "learned"] },
+    "matched_budget_candidates": { "type": "integer", "minimum": 1 },
+    "metric": { "const": "candidates_evaluated_deterministic_machine_independent" },
+    "treatment_tasks": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } },
+    "control_tasks": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" } },
+    "control_rule": { "const": "control_tasks_are_solvable_with_add_sub_only_so_vocabulary_can_only_cost" },
+    "verification_rule": { "const": "every_reported_solution_is_revalidated_by_the_trusted_kernel_and_interpreter" },
+    "generalization_rule": { "const": "a_solution_that_fails_heldout_cases_makes_its_candidate_count_a_lower_bound" },
+    "vocabulary_provenance": { "const": "a2_cycle_2_entries_learned_from_hand_written_training_programs" },
+    "authority": { "const": "D0_offline_no_deployment" },
+    "registered_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" }
+  },
+  "$comment": "Both arms share one budget and one search procedure. They differ only in the vocabulary available, so any difference in candidates evaluated is attributable to the vocabulary."
+}

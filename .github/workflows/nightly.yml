@@ -73,6 +73,13 @@ jobs:
           TZ: UTC
         run: python -m laicode smoke-function-language "$RUNNER_TEMP/laicode-function-nightly"
 
+      - name: Run matched-budget synthesis transfer study
+        env:
+          LC_ALL: C.UTF-8
+          PYTHONHASHSEED: "0"
+          TZ: UTC
+        run: python -m laicode run-synthesis-experiment "$RUNNER_TEMP/laicode-synthesis-nightly"
+
       - name: Retain nightly evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -83,5 +90,6 @@ jobs:
             ${{ runner.temp }}/laicode-algorithm-nightly/
             ${{ runner.temp }}/laicode-collection-nightly/
             ${{ runner.temp }}/laicode-function-nightly/
+            ${{ runner.temp }}/laicode-synthesis-nightly/
           if-no-files-found: warn
           retention-days: 30

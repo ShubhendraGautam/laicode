@@ -49,6 +49,12 @@ depth-four limits and its forward-only call resolution are epoch semantics.
 The run record constrains dispatch change to zero, because an A2 abstraction
 must remove duplicated definitions without altering executed work.
 
+A2-S adds a matched-budget synthesis experiment manifest, synthesis task
+contracts separating treatment from control, and a run record whose ratios are
+integer parts per million. The record marks a ratio as a lower bound whenever
+the compared arm stopped at its budget or returned a program that failed
+held-out cases, so a truncated or decoy run cannot be read as a solved one.
+
 Prototype-v0 identity is SHA-256 over UTF-8 JSON with:
 
 - object fields sorted by Unicode scalar value;

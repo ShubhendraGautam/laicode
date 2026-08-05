@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laicode.dev/schemas/synthesis-run-report-record.v2.schema.json",
+  "title": "A2-S synthesis transfer run report record v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "report"],
+  "properties": {
+    "schema_version": { "const": "SynthesisRunReportRecordV2" },
+    "report_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+    "report": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "status", "experiment_manifest_id", "matched_budget_candidates", "task_count", "results", "treatment_median_ratio_ppm", "control_median_ratio_ppm", "all_reported_solutions_kernel_verified", "limitations"],
+      "properties": {
+        "schema_version": { "const": "SynthesisRunReportV2" },
+        "status": { "const": "complete" },
+        "experiment_manifest_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+        "matched_budget_candidates": { "type": "integer", "minimum": 1 },
+        "task_count": { "type": "integer", "minimum": 1 },
+        "results": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/row" } },
+        "treatment_median_ratio_ppm": { "oneOf": [{ "type": "integer" }, { "type": "null" }] },
+        "control_median_ratio_ppm": { "oneOf": [{ "type": "integer" }, { "type": "null" }] },
+        "all_reported_solutions_kernel_verified": { "const": true },
+        "limitations": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  },
+  "$defs": {
+    "arm": {
+      "type": "object", "additionalProperties": false,
+      "required": ["task_id", "arm", "outcome", "candidates_evaluated", "generalizes", "kernel_verified", "pool_expressions", "pool_conditions", "pool_statements"],
+      "properties": {
+        "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+        "arm": { "enum": ["primitive", "learned"] },
+        "outcome": { "enum": ["solved", "budget", "exhausted"] },
+        "candidates_evaluated": { "type": "integer", "minimum": 0 },
+        "generalizes": { "oneOf": [{ "type": "boolean" }, { "type": "null" }] },
+        "kernel_verified": { "type": "boolean" },
+        "pool_expressions": { "type": "integer", "minimum": 1 },
+        "pool_conditions": { "type": "integer", "minimum": 1 },
+        "pool_statements": { "type": "integer", "minimum": 1 },
+        "program_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/content_id" },
+        "program": { "type": "string", "minLength": 1 }
+      }
+    },
+    "row": {
+      "type": "object", "additionalProperties": false,
+      "required": ["task_id", "family", "requires_learned_vocabulary", "primitive", "learned", "candidate_ratio_ppm_primitive_over_learned", "ratio_is_lower_bound"],
+      "properties": {
+        "task_id": { "$ref": "function-language-defs.v2.schema.json#/$defs/identifier" },
+        "family": { "enum": ["treatment", "control"] },
+        "requires_learned_vocabulary": { "type": "boolean" },
+        "primitive": { "$ref": "#/$defs/arm" },
+        "learned": { "$ref": "#/$defs/arm" },
+        "candidate_ratio_ppm_primitive_over_learned": { "oneOf": [{ "type": "integer" }, { "type": "null" }] },
+        "ratio_is_lower_bound": { "type": "boolean" }
+      }
+    }
+  },
+  "$comment": "ratio_is_lower_bound is true when the primitive arm's hit failed held-out cases. Such a hit did not solve the task, so its candidate count -- and the ratio derived from it -- understate the true cost."
+}

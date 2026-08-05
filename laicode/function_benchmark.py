@@ -550,6 +550,16 @@ def _build_vocabularies(tasks: Mapping[str, FunctionTask]) -> tuple[FunctionVoca
     return primitive, cycle_1, cycle_2
 
 
+def build_function_vocabularies(tasks: Mapping[str, FunctionTask]) -> tuple[FunctionVocabulary, ...]:
+    """Public accessor for the registered A2 growth sequence.
+
+    Downstream studies (A2-S synthesis) need the same cycle-0/1/2 vocabularies
+    this experiment freezes, without depending on a private name.
+    """
+
+    return _build_vocabularies(tasks)
+
+
 @dataclass(frozen=True)
 class FunctionExperimentReport:
     report_id: str

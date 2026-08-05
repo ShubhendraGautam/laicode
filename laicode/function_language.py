@@ -15,6 +15,8 @@ VOCABULARY_ENTRY_SCHEMA_VERSION = "FunctionVocabularyEntryV2"
 VOCABULARY_SCHEMA_VERSION = "FunctionVocabularyV2"
 KERNEL_VERSION = "CallGraphFunctionKernelV2"
 LEARNER_VERSION = "CrossTaskFunctionAbstractionLearnerV2"
+DISCOVERY_LEARNER_VERSION = "AntiUnificationDiscoveryLearnerV3"
+_LEARNER_IDS = frozenset({LEARNER_VERSION, DISCOVERY_LEARNER_VERSION})
 
 I64_MIN = -(1 << 63)
 I64_MAX = (1 << 63) - 1
@@ -475,6 +477,31 @@ def learned_definition(kind: str) -> FunctionDef:
     return FunctionDef.from_document(_DEFINITIONS[kind])
 
 
+def check_discovered_definition(definition: FunctionDef) -> None:
+    """Validate a definition that no fixed table vouches for.
+
+    A2 shipped with two hand-written definitions and required every entry to
+    name one of them, so nothing a learner *discovered* could be represented.
+    Discovered entries carry their own definition instead, and earn the same
+    transparency guarantee structurally rather than by table lookup: the body
+    must type-check standalone, be self-contained, and be non-recursive.
+    """
+
+    if definition.name in _DEFINITIONS:
+        raise FunctionLanguageError("discovered definition may not shadow a fixed kind")
+    if not all(item.parameter_type in {I64, BOOL} for item in definition.parameters):
+        raise FunctionLanguageError("discovered definition takes only scalar parameters")
+    if definition.statement_count < 2:
+        raise FunctionLanguageError("discovered definition must contain multiple statements")
+    for expression in _function_expressions(definition):
+        if expression.op == "call":
+            raise FunctionLanguageError("discovered definition must be self-contained")
+        if expression.op == "learned_call":
+            raise FunctionLanguageError("discovered definition must not nest learned calls")
+    # Type-check the body in isolation: no sibling declarations exist for it.
+    _validate_function(definition, {}, EMPTY_FUNCTION_VOCABULARY)
+
+
 @dataclass(frozen=True)
 class FunctionVocabularyEntry:
     kind: str
@@ -485,17 +512,25 @@ class FunctionVocabularyEntry:
     occurrences: int
     estimated_definition_saving: int
     learner_id: str = LEARNER_VERSION
+    discovered_definition: FunctionDef | None = None
 
     def __post_init__(self) -> None:
-        if self.kind not in _DEFINITIONS:
-            raise FunctionLanguageError("function vocabulary kind is invalid")
+        if self.discovered_definition is None:
+            if self.kind not in _DEFINITIONS:
+                raise FunctionLanguageError("function vocabulary kind is invalid")
+        else:
+            if self.discovered_definition.name != self.kind:
+                raise FunctionLanguageError("discovered definition name must match its kind")
+            check_discovered_definition(self.discovered_definition)
         if not _valid_content_id(self.evidence_catalog_id) or not _valid_content_id(self.parent_vocabulary_id):
             raise FunctionLanguageError("function vocabulary provenance is invalid")
-        if isinstance(self.learned_cycle, bool) or self.learned_cycle < 1 or self.training_task_ids != tuple(sorted(set(self.training_task_ids))) or len(self.training_task_ids) < 2 or self.occurrences < 2 or self.estimated_definition_saving < 1 or self.learner_id != LEARNER_VERSION:
+        if isinstance(self.learned_cycle, bool) or self.learned_cycle < 1 or self.training_task_ids != tuple(sorted(set(self.training_task_ids))) or len(self.training_task_ids) < 2 or self.occurrences < 2 or self.estimated_definition_saving < 1 or self.learner_id not in _LEARNER_IDS:
             raise FunctionLanguageError("function vocabulary evidence is invalid")
 
     @property
     def definition(self) -> FunctionDef:
+        if self.discovered_definition is not None:
+            return self.discovered_definition
         return learned_definition(self.kind)
 
     @property
@@ -517,7 +552,7 @@ class FunctionVocabularyEntry:
             "kind": self.kind,
             "parameter_types": list(definition.parameter_types),
             "return_type": definition.return_type,
-            "definition": _DEFINITIONS[self.kind],
+            "definition": definition.to_document(),
             "learner": {"id": self.learner_id, "cycle": self.learned_cycle},
             "provenance": {
                 "evidence_catalog_id": self.evidence_catalog_id,
@@ -536,10 +571,18 @@ class FunctionVocabularyEntry:
         expected = {"schema_version", "kind", "parameter_types", "return_type", "definition", "learner", "provenance", "evidence"}
         if not isinstance(value, dict) or set(value) != expected or value["schema_version"] != VOCABULARY_ENTRY_SCHEMA_VERSION or not isinstance(value["kind"], str):
             raise FunctionLanguageError("function vocabulary entry is invalid")
-        kind = value["kind"]
-        if kind not in _DEFINITIONS or value["definition"] != _DEFINITIONS[kind]:
-            raise FunctionLanguageError("function vocabulary definition differs")
-        definition = learned_definition(kind)
+        kind, document = value["kind"], value["definition"]
+        if not isinstance(document, dict):
+            raise FunctionLanguageError("function vocabulary definition is malformed")
+        if kind in _DEFINITIONS:
+            if document != _DEFINITIONS[kind]:
+                raise FunctionLanguageError("function vocabulary definition differs")
+            definition = learned_definition(kind)
+            discovered = None
+        else:
+            definition = FunctionDef.from_document(document)
+            check_discovered_definition(definition)
+            discovered = definition
         if value["parameter_types"] != list(definition.parameter_types) or value["return_type"] != definition.return_type:
             raise FunctionLanguageError("function vocabulary signature differs")
         learner, provenance, evidence = value["learner"], value["provenance"], value["evidence"]
@@ -548,7 +591,7 @@ class FunctionVocabularyEntry:
         tasks = provenance["training_task_ids"]
         if not isinstance(tasks, list) or not all(isinstance(item, str) for item in tasks) or evidence["definition_statement_count"] != definition.statement_count:
             raise FunctionLanguageError("function vocabulary entry evidence differs")
-        return cls(kind, provenance["evidence_catalog_id"], provenance["parent_vocabulary_id"], learner["cycle"], tuple(tasks), evidence["cross_task_occurrences"], evidence["estimated_definition_saving"], learner["id"])
+        return cls(kind, provenance["evidence_catalog_id"], provenance["parent_vocabulary_id"], learner["cycle"], tuple(tasks), evidence["cross_task_occurrences"], evidence["estimated_definition_saving"], learner["id"], discovered)
 
 
 @dataclass(frozen=True)
