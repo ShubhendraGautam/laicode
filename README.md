@@ -103,3 +103,17 @@ No novelty claim is authorized. Library-learning systems already perform
 abstraction discovery with stronger learners. Any differentiator here would rest
 on the governance boundary, which is exactly what has been deferred until there
 is something to govern.
+
+## Multi-agent development
+
+When more than one coding agent works this repository at the same time,
+coordinate through [gator-tools](https://github.com/ShubhendraGautam/gator-tools),
+vendored here as a submodule:
+
+```sh
+node gator-tools/skills/multi-agent-coordination/scripts/coord.mjs
+```
+
+Run `git submodule update --init` if that directory is empty. Coordination state
+lives in this repository's `.git/`, never in the submodule, and nothing the
+project needs at runtime depends on it — a clone without submodules still works.
